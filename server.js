@@ -5,52 +5,36 @@ require('dotenv').config();
 const sassMiddleware = require('./lib/sass-middleware');
 const express = require('express');
 const morgan = require('morgan');
+const bcrypt = require('bcrypt');  // include bcrypt for password hashing
 
 const PORT = process.env.PORT || 8080;
 const app = express();
 
-const  db  = require('./db/connection');
+const db = require('./db/connection');
 app.set('view engine', 'ejs');
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
-// 'dev' = Concise output colored by response status for development use.
-//         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // middleware for handling JSON body content
 app.use(
   '/styles',
   sassMiddleware({
     source: __dirname + '/styles',
     destination: __dirname + '/public/styles',
-    isSass: false, // false => scss, true => sass
+    isSass: false,
   })
 );
 app.use(express.static('public'));
 
-// Separated Routes for each Resource
-// Note: Feel free to replace the example routes below with your own
-//const userApiRoutes = require('./routes/users-api');
-const widgetApiRoutes = require('./routes/widgets-api');
-const usersRoutes = require('./routes/users');
-
-// Mount all resource routes
-// Note: Feel free to replace the example routes below with your own
-// Note: Endpoints that return data (eg. JSON) usually start with `/api`
-//app.use('/api/users', userApiRoutes);
-//app.use('/api/widgets', widgetApiRoutes);
-//app.use('/users', usersRoutes);
-// Note: mount other resources here, using the same pattern above
+// app.use('/api/users', userApiRoutes); // If you have user API routes, you can include them here
 
 // Home page
-// Warning: avoid creating more routes in this file!
-// Separate them into separate routes files (see above).
-
 app.get('/', (req, res) => {
   res.render('index');
 });
 
 app.get('/quizzes', (req, res) => {
-  // your logic here
   res.render('quiz');
 });
 
@@ -58,20 +42,33 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
 
-// GET route for quiz creation form
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+
+app.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+
+  db.query('INSERT INTO Users (name, email, password) VALUES ($1, $2, $3)', [name, email, hashedPassword])
+    .then(() => {
+      res.redirect('/');
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Server error');
+    });
+});
+
 app.get('/quizzes/new', (req, res) => {
   res.render('quiz-create');
 });
 
-// POST route for quiz creation form submissions
 app.post('/quizzes', (req, res) => {
-  // Extract quiz data from req.body
   const { title, description } = req.body;
 
-  // Insert the new quiz into the database
   db.query(`INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4)`, [title, description, true,1])
     .then(() => {
-      // Redirect to quizzes page after successful insertion
       res.redirect('/quizzes');
     })
     .catch((err) => {
@@ -80,7 +77,36 @@ app.post('/quizzes', (req, res) => {
     });
 });
 
-app.get('/results', (req, res) => {
-  // your logic here
-  res.render('quiz-result');
+// Render login page
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// Handle login requests
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  db.query('SELECT * FROM Users WHERE email = $1', [email])
+    .then(async (result) => {
+      if (result.rows.length > 0) {
+        const user = result.rows[0];
+        const match = await bcrypt.compare(password, user.password);
+
+        if (match) {
+          // Passwords match
+          // TODO: Handle login success (set up session/cookie, redirect to dashboard, etc.)
+          res.send('Login success');
+        } else {
+          // Passwords don't match
+          res.status(401).send('Invalid credentials');
+        }
+      } else {
+        // No user with the provided email
+        res.status(401).send('Invalid credentials');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Server error');
+    });
 });
