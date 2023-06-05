@@ -79,3 +79,8 @@ app.post('/quizzes', (req, res) => {
       res.status(500).send('Server error');
     });
 });
+
+app.get('/results', (req, res) => {
+  // your logic here
+  res.render('quiz-result');
+});
