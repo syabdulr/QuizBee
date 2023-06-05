@@ -1,18 +1,20 @@
+// quiz-api.js
+
 /*
- * All routes for User Data are defined here
- * Since this file is loaded in server.js into api/users,
- *   these routes are mounted onto /api/users
- * See: https://expressjs.com/en/guide/using-middleware.html#middleware.router
+ * All routes for Quiz are defined here
+ * Since this file is loaded in server.js into api/quizzes,
+ *   these routes are mounted onto /api/quizzes
  */
 
 const express = require('express');
 const router  = express.Router();
-const userQueries = require('../db/queries/users');
+const quizQueries = require('/db/queries/quizzes');
 
-router.get('/', (req, res) => {
-  userQueries.getUsers()
-    .then(users => {
-      res.json({ users });
+router.post('/', (req, res) => {
+  const quizData = req.body;
+  quizQueries.createQuiz(quizData)
+    .then(quiz => {
+      res.json({ quiz });
     })
     .catch(err => {
       res

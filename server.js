@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const PORT = process.env.PORT || 8080;
 const app = express();
 
+const  db  = require('./db/connection');
 app.set('view engine', 'ejs');
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
@@ -28,16 +29,16 @@ app.use(express.static('public'));
 
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
-const userApiRoutes = require('./routes/users-api');
+//const userApiRoutes = require('./routes/users-api');
 const widgetApiRoutes = require('./routes/widgets-api');
 const usersRoutes = require('./routes/users');
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 // Note: Endpoints that return data (eg. JSON) usually start with `/api`
-app.use('/api/users', userApiRoutes);
-app.use('/api/widgets', widgetApiRoutes);
-app.use('/users', usersRoutes);
+//app.use('/api/users', userApiRoutes);
+//app.use('/api/widgets', widgetApiRoutes);
+//app.use('/users', usersRoutes);
 // Note: mount other resources here, using the same pattern above
 
 // Home page
@@ -48,6 +49,33 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+app.get('/quizzes', (req, res) => {
+  // your logic here
+  res.render('quiz');
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
+});
+
+// GET route for quiz creation form
+app.get('/quizzes/new', (req, res) => {
+  res.render('quiz-create');
+});
+
+// POST route for quiz creation form submissions
+app.post('/quizzes', (req, res) => {
+  // Extract quiz data from req.body
+  const { title, description } = req.body;
+
+  // Insert the new quiz into the database
+  db.query(`INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4)`, [title, description, true,1])
+    .then(() => {
+      // Redirect to quizzes page after successful insertion
+      res.redirect('/quizzes');
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Server error');
+    });
 });
