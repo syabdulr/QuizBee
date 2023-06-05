@@ -64,17 +64,39 @@ app.get('/quizzes/new', (req, res) => {
   res.render('quiz-create');
 });
 
-app.post('/quizzes', (req, res) => {
-  const { title, description } = req.body;
+app.post('/quizzes', async (req, res) => {
+  const { title, description, questions, answers } = req.body;
+  console.log(req.body);
+  try {
+    // start a transaction
+    await db.query('BEGIN');
 
-  db.query(`INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4)`, [title, description, true,1])
-    .then(() => {
-      res.redirect('/quizzes');
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Server error');
-    });
+    const quizResult = await db.query(`INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4) RETURNING id`, [title, description, true, 1]);
+    const quizId = quizResult.rows[0].id;
+
+    for (let question of questions) {
+      console.log(question);
+      const questionResult = await db.query(`INSERT INTO Questions (quiz_id, question_text) VALUES ($1, $2) RETURNING id`, [quizId, question]);
+      const questionId = questionResult.rows[0].id;
+      for (let choice of answers) {
+        if(Array.isArray(choice)){
+          await db.query(`INSERT INTO Choices (question_id, choice_text, is_correct) VALUES ($1, $2, $3)`, [questionId, choice[0], true]);
+        } else {
+          await db.query(`INSERT INTO Choices (question_id, choice_text, is_correct) VALUES ($1, $2, $3)`, [questionId, choice, false]);
+        }
+      }
+    }
+
+    // commit the transaction
+    await db.query('COMMIT');
+
+    res.redirect('/quizzes');
+  } catch (err) {
+    console.error(err);
+    // something went wrong, rollback the transaction
+    await db.query('ROLLBACK');
+    res.status(500).send('Server error');
+  }
 });
 
 // Render login page
