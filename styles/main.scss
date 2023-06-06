@@ -40,3 +40,35 @@ body {
 .quiz-container:hover {
   background: #f0f0f0;
 }
+
+#createQuizButton {
+  background-color: #992409;
+  border-color: #992409;
+  color: #f0f0f0;
+}
+
+#displayQuizzesButton {
+  background-color: #992409;
+  border-color: #992409;
+  color: #f0f0f0;
+}
+
+.text-center {
+  margin-top: 10%;
+  margin-bottom: 5%
+}
+
+.text-center2 {
+  text-align: center;
+}
+
+#createQuizButton:hover {
+  color: #ffe100;
+  box-shadow: 5px 8px 5px #484639;
+}
+
+#displayQuizzesButton:hover {
+  color: #ffe100;
+  box-shadow: 5px 8px 5px #484639;
+}
+
