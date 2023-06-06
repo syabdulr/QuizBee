@@ -16,4 +16,16 @@ body {
     border-radius: 25px;
     }
   }
+  .greeting {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color:rgb(255, 255, 255);
+    border-radius: 3px;
+    padding: 5px;
+    font-family: 'Bungee', 'cursive';
+    font-size: 3em;
+    white-space: nowrap;
+  }
 }

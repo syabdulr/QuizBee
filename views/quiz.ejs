@@ -22,20 +22,16 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
-    <link rel="stylesheet" href="/vendor/border-box.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/styles/main.css" />
-    <link rel="stylesheet" href="/styles/layout.css" />
-    <link rel="stylesheet" href="/styles/login.css" />
-    <link rel="stylesheet" href="/styles/createAccount.css" />
-    <link rel="stylesheet" href="/styles/greeting.css" />
-    <link rel="stylesheet" href="/styles/nav-bar-brand.css" />
-    <link rel="stylesheet" href="/styles/nav-linkItems.css" />
+    <link rel="stylesheet" href="/styles/nav-bar.css" />
     <link rel="stylesheet" href="/styles/quiz.css" />
-    <link rel="stylesheet" href="/styles/createNewQuiz.css" />
+
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -45,28 +41,27 @@
   <body>
     <%- include('./_header.ejs') %>
     <main>
-    <h1 class="create-new-quiz">Create a New Quiz 📝</h1>
-    <form class= "quiz" id="quizForm">
-      <label for="title">Quiz Title:</label>
-      <input type="text" id="title" name="title" required />
+      <h1 class="create-new-quiz">Create a New Quiz 📝</h1>
+      <form class="quiz" id="quizForm">
+        <label for="title">Quiz Title:</label>
+        <input type="text" id="title" name="title" required />
 
-      <label for="description">Description:</label>
-      <textarea id="description" name="description"></textarea>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description"></textarea>
 
-      <!-- Questions will be appended here -->
-      <button type="button" id="addQuestion">Add Question</button>
-      <div id="questions"></div>
+        <!-- Questions will be appended here -->
+        <button type="button" id="addQuestion">Add Question</button>
+        <div id="questions"></div>
 
+        <input class="submit" type="submit" value="Create Quiz" />
+      </form>
 
-      <input class="submit" type="submit" value="Create Quiz" />
-    </form>
+      <script>
+        let questionIndex = 0;
 
-    <script>
-      let questionIndex = 0;
-
-      function addQuestion() {
-        // clean this up
-        const questionElement = $(`
+        function addQuestion() {
+          // clean this up
+          const questionElement = $(`
           <div>
             <h2>Question ${questionIndex + 1}</h2>
             <button type="button" class="removeQuestion">Remove Question</button>
@@ -77,92 +72,96 @@
             <div class="choices"></div>
           </div>
         `);
-        $('#questions').append(questionElement);
+          $("#questions").append(questionElement);
 
-        let choiceIndex = 0;
+          let choiceIndex = 0;
 
-        function addChoice() {
-          const choicesElement = questionElement.find('.choices');
-          //console.log('QuestionID, ChoiceId');
-          //console.log(questions[questionIndex], questions[questionIndex].choices[choiceIndex]);
-          choicesElement.append(`
+          function addChoice() {
+            const choicesElement = questionElement.find(".choices");
+            //console.log('QuestionID, ChoiceId');
+            //console.log(questions[questionIndex], questions[questionIndex].choices[choiceIndex]);
+            choicesElement.append(`
             <div>
-              <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${choiceIndex + 1}:</label>
+              <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${
+              choiceIndex + 1
+            }:</label>
               <input type="text" id="questions[${questionIndex}].choices[${choiceIndex}].text" name="questions[${questionIndex}].choices[${choiceIndex}].text" required />
                <input type="checkbox" id="questions[${questionIndex}].choices[${choiceIndex}].is_correct" name="questions[${questionIndex}].choices[${choiceIndex}].is_correct">
               <label for="questions[${questionIndex}].choices[${choiceIndex}].is_correct">Correct</label>
             </div>
           `);
-          choiceIndex++;
-        }
+            choiceIndex++;
+          }
 
-        questionElement.find('.addChoice').click(addChoice);
-        questionElement.find('.removeQuestion').click(function() {
-          questionElement.remove();
-        });
-
-        // Add a default choice
-        addChoice();
-
-        questionIndex++;
-      }
-
-      $('#addQuestion').click(addQuestion);
-
-      // Add a default question
-      addQuestion();
-
-      // Handle form submission with jQuery and AJAX
-      $('#quizForm').submit(function(event) {
-        event.preventDefault(); // prevent the form from submitting normally
-
-        // Prepare the quiz data structure
-        const quizData = {
-          title: $('#title').val(),
-          description: $('#description').val(),
-          questions: []
-        };
-
-        // Iterate over each question element and collect the data
-        $('#questions > div').each(function() {
-          const questionElement = $(this);
-          const questionData = {
-            text: questionElement.find('input[name^="questions"]').val(),
-            choices: []
-          };
-
-          // Iterate over each choice element and collect the data
-          questionElement.find('.choices > div').each(function() {
-            const choiceElement = $(this);
-            const choiceData = {
-              text: choiceElement.find('input[name^="questions"]').val(),
-              is_correct: choiceElement.find('input[type=checkbox]').prop('checked') // fix
-            };
-            questionData.choices.push(choiceData);
+          questionElement.find(".addChoice").click(addChoice);
+          questionElement.find(".removeQuestion").click(function () {
+            questionElement.remove();
           });
 
-          quizData.questions.push(questionData);
-          console.log(quizData.questions);
-        });
+          // Add a default choice
+          addChoice();
 
-        // Send an AJAX POST request to the server
-        // console.log("QuizData ",quizData);
-        $.ajax({
-          type: 'POST',
-          url: '/quizzes',
-          data: JSON.stringify(quizData),
-          contentType: 'application/json',
-          success: function(data) {
-            // Handle the successful response
-            console.log(data);
-          },
-          error: function(error) {
-            // Handle the error
-           console.error(error);
-          }
+          questionIndex++;
+        }
+
+        $("#addQuestion").click(addQuestion);
+
+        // Add a default question
+        addQuestion();
+
+        // Handle form submission with jQuery and AJAX
+        $("#quizForm").submit(function (event) {
+          event.preventDefault(); // prevent the form from submitting normally
+
+          // Prepare the quiz data structure
+          const quizData = {
+            title: $("#title").val(),
+            description: $("#description").val(),
+            questions: [],
+          };
+
+          // Iterate over each question element and collect the data
+          $("#questions > div").each(function () {
+            const questionElement = $(this);
+            const questionData = {
+              text: questionElement.find('input[name^="questions"]').val(),
+              choices: [],
+            };
+
+            // Iterate over each choice element and collect the data
+            questionElement.find(".choices > div").each(function () {
+              const choiceElement = $(this);
+              const choiceData = {
+                text: choiceElement.find('input[name^="questions"]').val(),
+                is_correct: choiceElement
+                  .find("input[type=checkbox]")
+                  .prop("checked"), // fix
+              };
+              questionData.choices.push(choiceData);
+            });
+
+            quizData.questions.push(questionData);
+            console.log(quizData.questions);
+          });
+
+          // Send an AJAX POST request to the server
+          // console.log("QuizData ",quizData);
+          $.ajax({
+            type: "POST",
+            url: "/quizzes",
+            data: JSON.stringify(quizData),
+            contentType: "application/json",
+            success: function (data) {
+              // Handle the successful response
+              console.log(data);
+            },
+            error: function (error) {
+              // Handle the error
+              console.error(error);
+            },
+          });
         });
-      });
-    </script>
+      </script>
     </main>
   </body>
 </html>
