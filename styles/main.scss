@@ -27,3 +27,14 @@ body {
     }
   }
 }
+
+.quiz-container {
+  /* Your existing styles here */
+
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.quiz-container:hover {
+  background: #f0f0f0;
+}
