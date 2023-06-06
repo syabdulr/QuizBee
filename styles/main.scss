@@ -1,9 +1,10 @@
 body {
   display:flow-root;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  justify-content:space-around;
+  align-items:stretch;
   min-height: 100vh;
+  font-family: 'Bungee', 'cursive';
 
   background-color: #ffe100;
   background-image: url("https://www.transparenttextures.com/patterns/hexellence.png");
