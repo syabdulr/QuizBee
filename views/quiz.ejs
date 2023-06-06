@@ -4,43 +4,127 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Quiz</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   </head>
   <body>
     <%- include('./_header.ejs') %>
     <h1>Create a New Quiz</h1>
-    <form action="/quizzes" method="POST">
+    <form id="quizForm">
       <label for="title">Quiz Title:</label>
       <input type="text" id="title" name="title" required />
 
       <label for="description">Description:</label>
       <textarea id="description" name="description"></textarea>
 
-      <!-- Question -->
-      <label for="questions[0].text">Question:</label>
-      <input type="text" id="questions[0].text" name="questions[0].text" required />
+      <!-- Questions will be appended here -->
+      <div id="questions"></div>
 
-      <!-- Choices -->
-      <label for="questions[0].choices[0].text">Choice 1:</label>
-      <input type="text" id="questions[0].choices[0].text" name="answers[0].q1" required />
-      <input type="checkbox" id="questions[0].choices[0].is_correct" name="answers[0].q1">
-      <label for="questions[0].choices[0].is_correct">Correct</label>
-
-      <label for="questions[0].choices[1].text">Choice 2:</label>
-      <input type="text" id="questions[0].choices[1].text" name="answers[0].q2" required />
-      <input type="checkbox" id="questions[0].choices[1].is_correct" name="answers[0].q2">
-      <label for="questions[0].choices[1].is_correct">Correct</label>
-
-      <label for="questions[0].choices[2].text">Choice 3:</label>
-      <input type="text" id="questions[0].choices[2].text" name="answers[0].q3" required />
-      <input type="checkbox" id="questions[0].choices[2].is_correct" name="answers[0].q3">
-      <label for="questions[0].choices[2].is_correct">Correct</label>
-
-      <label for="questions[0].choices[3].text">Choice 4:</label>
-      <input type="text" id="questions[0].choices[3].text" name="answers[0].q4" required />
-      <input type="checkbox" id="questions[0].choices[3].is_correct" name="answers[0].q4">
-      <label for="questions[0].choices[3].is_correct">Correct</label>
+      <button type="button" id="addQuestion">Add Question</button>
 
       <input type="submit" value="Create Quiz" />
     </form>
+
+    <script>
+      let questionIndex = 0;
+
+      function addQuestion() {
+        // clean this up
+        console.log(questions[questionIndex].text);
+        const questionElement = $(`
+          <div>
+            <h2>Question ${questionIndex + 1}</h2>
+            <button type="button" class="removeQuestion">Remove Question</button>
+            <label for="">Question:</label>
+            <input type="text" id="questions[${questionIndex}].text" name="questions[${questionIndex}].text" required />
+            <button type="button" class="addChoice">Add Choice</button>
+            <div class="choices"></div>
+          </div>
+        `);
+        $('#questions').append(questionElement);
+
+        let choiceIndex = 0;
+
+        function addChoice() {
+          const choicesElement = questionElement.find('.choices');
+          //console.log('QuestionID, ChoiceId');
+          //console.log(questions[questionIndex], questions[questionIndex].choices[choiceIndex]);
+          choicesElement.append(`
+            <div>
+              <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${choiceIndex + 1}:</label>
+              <input type="text" id="questions[${questionIndex}].choices[${choiceIndex}].text" name="questions[${questionIndex}].choices[${choiceIndex}].text" required />
+               <input type="checkbox" id="questions[${questionIndex}].choices[${choiceIndex}].is_correct" name="questions[${questionIndex}].choices[${choiceIndex}].is_correct">
+              <label for="questions[${questionIndex}].choices[${choiceIndex}].is_correct">Correct</label>
+            </div>
+          `);
+          choiceIndex++;
+        }
+
+        questionElement.find('.addChoice').click(addChoice);
+        questionElement.find('.removeQuestion').click(function() {
+          questionElement.remove();
+        });
+
+        // Add a default choice
+        addChoice();
+
+        questionIndex++;
+      }
+
+      $('#addQuestion').click(addQuestion);
+
+      // Add a default question
+      addQuestion();
+
+      // Handle form submission with jQuery and AJAX
+      $('#quizForm').submit(function(event) {
+        event.preventDefault(); // prevent the form from submitting normally
+
+        // Prepare the quiz data structure
+        const quizData = {
+          title: $('#title').val(),
+          description: $('#description').val(),
+          questions: []
+        };
+
+        // Iterate over each question element and collect the data
+        $('#questions > div').each(function() {
+          const questionElement = $(this);
+          const questionData = {
+            text: questionElement.find('input[name^="questions"]').val(),
+            choices: []
+          };
+
+          // Iterate over each choice element and collect the data
+          questionElement.find('.choices > div').each(function() {
+            const choiceElement = $(this);
+            const choiceData = {
+              text: choiceElement.find('input[name^="questions"]').val(),
+              is_correct: choiceElement.find('input[type=checkbox]').prop('checked') // fix
+            };
+            questionData.choices.push(choiceData);
+          });
+
+          quizData.questions.push(questionData);
+          console.log(quizData.questions);
+        });
+
+        // Send an AJAX POST request to the server
+        // console.log("QuizData ",quizData);
+        $.ajax({
+          type: 'POST',
+          url: '/quizzes',
+          data: JSON.stringify(quizData),
+          contentType: 'application/json',
+          success: function(data) {
+            // Handle the successful response
+            console.log(data);
+          },
+          error: function(error) {
+            // Handle the error
+           console.error(error);
+          }
+        });
+      });
+    </script>
   </body>
 </html>

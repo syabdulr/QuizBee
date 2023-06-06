@@ -65,39 +65,59 @@ app.get('/quizzes/new', (req, res) => {
 });
 
 app.post('/quizzes', async (req, res) => {
-  const { title, description, questions, answers } = req.body;
-  console.log(req.body);
+
+  const { title, description, questions } = req.body;
+
   try {
     // start a transaction
     await db.query('BEGIN');
-
-    const quizResult = await db.query(`INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4) RETURNING id`, [title, description, true, 1]);
+    console.log(title,description);
+    const quizResult = await db.query(
+      'INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4) RETURNING id',
+      [title, description, true, 1]
+    );
     const quizId = quizResult.rows[0].id;
 
+
+    // Validate that all questions have text
     for (let question of questions) {
-      console.log(question);
-      const questionResult = await db.query(`INSERT INTO Questions (quiz_id, question_text) VALUES ($1, $2) RETURNING id`, [quizId, question]);
+      if (!question.text) {
+        res.status(400).json({ error: 'All questions must have text.' });
+        return;
+      }
+    }
+
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+      const questionResult = await db.query(
+        'INSERT INTO Questions (quiz_id, question_text) VALUES ($1, $2) RETURNING id',
+        [quizId, question.text]
+      );
+      console.log(question.text,quizId);
+
       const questionId = questionResult.rows[0].id;
-      for (let choice of answers) {
-        if(Array.isArray(choice)){
-          await db.query(`INSERT INTO Choices (question_id, choice_text, is_correct) VALUES ($1, $2, $3)`, [questionId, choice[0], true]);
-        } else {
-          await db.query(`INSERT INTO Choices (question_id, choice_text, is_correct) VALUES ($1, $2, $3)`, [questionId, choice, false]);
-        }
+      for (let j = 0; j < question.choices.length; j++) {
+        const choice = question.choices[j];
+        await db.query(
+          'INSERT INTO Choices (question_id, choice_text, is_correct) VALUES ($1, $2, $3)',
+          [questionId, choice.text, choice.is_correct]
+        );
+        console.log(choice);
       }
     }
 
     // commit the transaction
     await db.query('COMMIT');
 
-    res.redirect('/quizzes');
+    res.status(200).json({ message: 'Quiz added successfully' });
   } catch (err) {
     console.error(err);
     // something went wrong, rollback the transaction
     await db.query('ROLLBACK');
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 // Render login page
 app.get('/login', (req, res) => {
@@ -118,6 +138,7 @@ app.post('/login', async (req, res) => {
           // Passwords match
           // TODO: Handle login success (set up session/cookie, redirect to dashboard, etc.)
           res.send('Login success');
+          res.render('index');
         } else {
           // Passwords don't match
           res.status(401).send('Invalid credentials');
