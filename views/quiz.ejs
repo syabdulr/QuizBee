@@ -37,23 +37,31 @@
 
   <body>
     <%- include('./_header.ejs') %>
+    <script>
+      const quizbee = new Audio("/media/quizbee.mp3");
+    </script>
+
+    <!-- HTML  class='chime'
+        JS    $('button.chime').onclick(function(
+          quizzbee.play();
+        )) -->
 
     <main>
       <div class="quizPageMenu">
         <div class="text-center">
-          <button id="createQuizButton" class="btn btn-primary">
+          <button onclick="quizbee.play()" id="createQuizButton" class="btn btn-primary chime">
             Create New Quiz
           </button>
         </div>
         <div class="text-center2">
-          <button id="displayQuizzesButton" class="btn btn-primary">
+          <button onclick="quizbee.play()" id="displayQuizzesButton" class="btn btn-primary">
             Display Quizzes
           </button>
         </div>
       </div>
 
       <div id="newQuizForm" style="display: none">
-        <h1 class="create-new-quiz">Create a New Quiz</h1>
+        <h1 onclick="quizbee.play()" class="create-new-quiz">Create a New Quiz</h1>
         <form class="quiz" id="quizForm">
           <label for="title">Quiz Title:</label>
           <input type="text" id="title" name="title" required />
@@ -62,7 +70,7 @@
           <textarea id="description" name="description"></textarea>
 
           <!-- Questions will be appended here -->
-          <button type="button" id="addQuestion">Add Question</button>
+          <button onclick="quizbee.play()" type="button" id="addQuestion">Add Question</button>
           <div id="questions"></div>
 
           <input class="createQuizBtn" type="submit" value="Create Quiz" />
@@ -81,8 +89,8 @@
     const questionElement = $(`
         <div>
             <h2 class = "question-index"></h2>
-            <button type="button" class="removeQuestion">Remove Question 🚫</button>
-            <button type="button" class="addChoice">Add Choice ➕</button>
+            <button onclick="quizbee.play()" type="button" class="removeQuestion">Remove Question 🚫</button>
+            <button onclick="quizbee.play()" type="button" class="addChoice">Add Choice ➕</button>
             <h3>Question context:</h3>
             <input type="text" id="question_text" name="question_text" required />
             <div class="choices"></div>

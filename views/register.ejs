@@ -23,6 +23,11 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script defer src="/scripts/app.js"></script>
+
+  <script>
+    const quizbee = new Audio("/media/quizbee.mp3");
+  </script>
+
 </head>
 <body>
   <main>
@@ -41,7 +46,7 @@
           <label for="password">Password:</label>
           <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btnPrimary">Register</button>
+        <button onclick="quizbee.play()" type="submit" class="btnPrimary">Register</button>
       </form>
     </div>
   </main>
