@@ -1,19 +1,19 @@
 body {
-  display:flow-root;
+  display: flow-root;
   flex-direction: row;
-  justify-content:space-around;
-  align-items:stretch;
+  justify-content: space-around;
+  align-items: stretch;
   min-height: 100vh;
-  font-family: 'Bungee', 'cursive';
+  font-family: "Bungee", "cursive";
 
   background-color: #ffe100;
   background-image: url("https://www.transparenttextures.com/patterns/hexellence.png");
 
   main {
-    h1{
-    margin:10vh 10vw;
-    padding: 0.1em;
-    border-radius: 25px;
+    h1 {
+      margin: 10vh 10vw;
+      padding: 0.1em;
+      border-radius: 25px;
     }
   }
   .greeting {
@@ -21,18 +21,68 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color:rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
     border-radius: 3px;
     padding: 5px;
-    font-family: 'Bungee', 'cursive';
+    font-family: "Bungee", "cursive";
     font-size: 3em;
     white-space: nowrap;
     transition: 0.8s;
+    animation: fadeIn 0.7s ease-in;
+    -webkit-animation: fadeIn 0.7s;
+    -moz-animation: fadeIn 0.7s;
+    -o-animation: fadeIn 0.7s;
+    -ms-animation: fadeIn 0.7s;
   }
-  .greeting:hover{
-    color:rgb(255, 255, 255);
-    cursor: pointer;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
+
+  @-moz-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @-o-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @-ms-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+.greeting:hover {
+  color: rgb(255, 255, 255);
+  cursor: pointer;
 }
 
 .quiz-container {
@@ -60,7 +110,7 @@ body {
 
 .text-center {
   margin-top: 10%;
-  margin-bottom: 5%
+  margin-bottom: 5%;
 }
 
 .text-center2 {
