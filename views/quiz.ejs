@@ -8,9 +8,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com%22%3E/
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap" 
+    rel="stylesheet" />
 
   <!-- CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
@@ -161,6 +162,8 @@
         success: function (data) {
           console.log(data);
           $('#newQuizForm').hide();
+          loadQuizzes();
+          $("#quizForm").trigger('reset');
         },
         error: function (error) {
           console.error(error);
@@ -181,45 +184,50 @@
       // Hide the quiz list
       quizListContainer.hide();
     } else {
-      // Fetch the quizzes using AJAX
-      $.ajax({
-        type: 'POST',
-        url: '/displayQuizzes',
-        success: function (data) {
-          // Create a container for the quizzes
-          const quizList = $('<div></div>');
-          data.quizzes.forEach(function (quiz) {
-            // Create a container for the quiz
-            const quizContainer = $('<div class="quiz-container"></div>');
-            // Create an element for the quiz title
-            const titleElement = $(`<h2>${quiz.title}</h2>`);
-            // Create an element for the quiz description
-            const descriptionElement = $(`<p>${quiz.description}</p>`);
-            // Append the title and description to the quiz container
-            quizContainer.append(titleElement, descriptionElement);
-
-            // Add a click event listener to the quiz container
-            quizContainer.click(function() {
-              // Load the selected quiz
-              loadQuiz(quiz);
-            });
-
-            // Append the quiz container to the quiz list
-            quizList.append(quizContainer);
-          });
-          // Append the quiz list to the container and show it
-          quizListContainer.html(quizList).show();
-        },
-        error: function (error) {
-          console.error(error);
-        }
-      });
+      loadQuizzes();
     }
   });
 
+  const loadQuizzes = function() {
+    const quizListContainer = $('#quizListContainer');
+  // Fetch the quizzes using AJAX
+  $.ajax({
+    type: 'POST',
+    url: '/displayQuizzes',
+    success: function (data) {
+      // Create a container for the quizzes
+      const quizList = $('<div></div>');
+      data.quizzes.forEach(function (quiz) {
+        // Create a container for the quiz
+        const quizContainer = $('<div class="quiz-container"></div>');
+        // Create an element for the quiz title
+        const titleElement = $(`<h2>${quiz.title}</h2>`);
+        // Create an element for the quiz description
+        const descriptionElement = $(`<p>${quiz.description}</p>`);
+        // Append the title and description to the quiz container
+        quizContainer.append(titleElement, descriptionElement);
+
+        // Add a click event listener to the quiz container
+        quizContainer.click(function() {
+          // Load the selected quiz
+          loadQuiz(quiz);
+        });
+
+        // Append the quiz container to the quiz list
+        quizList.append(quizContainer);
+      });
+      // Append the quiz list to the container and show it
+      quizListContainer.html(quizList).show();
+    },
+    error: function (error) {
+      console.error(error);
+    }
+  })
+  };
+
   function loadQuiz(quiz) {
     console.log({ quiz })
-  let quizHtml = `
+    let quizHtml = `
     <h1 class= "quiz-title">${quiz.title}</h1>
     <p class= "quiz-description">${quiz.description}</p>
     <form id="quizForm">

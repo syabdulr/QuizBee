@@ -56,7 +56,7 @@ app.listen(PORT, () => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register", { user_id: req.session.user_id });
 });
 
 app.post("/register", async (req, res) => {
