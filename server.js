@@ -92,7 +92,7 @@ app.post("/quizzes", async (req, res) => {
 
     const quizResult = await db.query(
       "INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4) RETURNING id",
-      [title, description, true, 1]
+      [title, description, true, user_id]
     );
     const quizId = quizResult.rows[0].id;
 
