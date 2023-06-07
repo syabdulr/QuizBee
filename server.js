@@ -42,11 +42,13 @@ app.use(
 
 // Home page
 app.get("/", (req, res) => {
-  res.render("index");
+  const user_id = req.session.user_id; // Get user_id from session
+  res.render("index", { user_id }); // Pass user_id as a local variable to your EJS file
 });
 
+
 app.get("/quizzes", (req, res) => {
-  res.render("quiz");
+  res.render("quiz", { user_id: req.session.user_id });
 });
 
 app.listen(PORT, () => {
@@ -135,9 +137,10 @@ app.post("/quizzes", async (req, res) => {
 });
 
 // Render login page
-app.get("/login", (req, res) => {
-  res.render("login");
+app.get('/login', function(req, res) {
+  res.render('login', { user_id: req.session.user_id });
 });
+
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -175,17 +178,11 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.get("/logout", function (req, res, next) {
-  if (req.session) {
-    req.session.destroy(function (err) {
-      if (err) {
-        return next(err);
-      } else {
-        return res.redirect("/");
-      }
-    });
-  }
+app.get('/logout', function(req, res){
+  req.session = null;
+  res.redirect('/');
 });
+
 
 app.post("/displayQuizzes", (req, res) => {
   // Fetch quizzes from the database
