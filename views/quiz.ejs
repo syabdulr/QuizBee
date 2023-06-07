@@ -50,7 +50,7 @@
         <label for="title">Quiz Title:</label>
         <input type="text" id="title" name="title" required />
 
-        <label for="description">Description:</label>
+        <label for="description">Quiz Description:</label>
         <textarea id="description" name="description"></textarea>
 
         <!-- Questions will be appended here -->
@@ -78,6 +78,7 @@
         <h2 class = "question-index">Question ${questionIndex + 1}</h2>
         <button type="button" class="removeQuestion">Remove Question</button>
         <button type="button" class="addChoice">Add Choice</button>
+        <h3>Question context:</h3>
         <input type="text" id="question_text" name="question_text" required />
         <div class="choices"></div>
       </div>
