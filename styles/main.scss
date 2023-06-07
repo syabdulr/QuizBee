@@ -27,6 +27,11 @@ body {
     font-family: 'Bungee', 'cursive';
     font-size: 3em;
     white-space: nowrap;
+    transition: 0.8s;
+  }
+  .greeting:hover{
+    color:rgb(255, 255, 255);
+    cursor: pointer;
   }
 }
 
