@@ -1,9 +1,11 @@
-// load .env data into process.env
+  // load .env data into process.env
 require('dotenv').config();
 
 // Web server config
 const sassMiddleware = require('./lib/sass-middleware');
 const express = require('express');
+const cookieSession = require('cookie-session');
+
 const morgan = require('morgan');
 const bcrypt = require('bcrypt');  // include bcrypt for password hashing
 
@@ -26,6 +28,15 @@ app.use(
   })
 );
 app.use(express.static('public'));
+
+app.use(cookieSession ({
+  secret: process.env.SESSION_SECRET || 'default_secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production'}
+}
+
+))
 
 // app.use('/api/users', userApiRoutes); // If you have user API routes, you can include them here
 
@@ -82,7 +93,6 @@ app.post('/quizzes', async (req, res) => {
 
     // Validate that all questions have text
     for (let question of questions) {
-      // console.log({ questions })
       if (!question.choices) {
         res.status(400).json({ error: 'All questions must have text.' });
         return;
@@ -125,23 +135,31 @@ app.post('/quizzes', async (req, res) => {
 // Render login page
 app.get('/login', (req, res) => {
   res.render('login');
+
 });
 
-// Handle login requests
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
+  console.log("REQUESTTT--------------",req.body);
+
 
   db.query('SELECT * FROM Users WHERE email = $1', [email])
     .then(async (result) => {
       if (result.rows.length > 0) {
-        const user = result.rows[0];
+        const user = result.rows[0]; // store the user object
+        console.log("user is ", user.id);
         const match = await bcrypt.compare(password, user.password);
-
+        console.log("session is", req.session)
+        // res.cookie("userInfo", user_id); remove this
         if (match) {
           // Passwords match
-          // TODO: Handle login success (set up session/cookie, redirect to dashboard, etc.)
-          res.send('Login success');
-          res.render('index');
+          // set the cookie using cookie-session
+          req.session.user_id = user.id; // This will set the cookie
+          console.log(user.id)
+          const userId = user.id;
+          // id = user_id;
+          res.redirect('/');
         } else {
           // Passwords don't match
           res.status(401).send('Invalid credentials');
@@ -156,6 +174,18 @@ app.post('/login', async (req, res) => {
       res.status(500).send('Server error');
     });
 });
+
+app.get('/logout', function(req,res,next) {
+  if(req.session) {
+    req.session.destroy(function(err){
+      if(err) {
+        return next(err);
+      } else {
+        return res.redirect('/');
+      }
+    })
+  }
+})
 
 app.post('/displayQuizzes', (req, res) => {
   // Fetch quizzes from the database
@@ -186,11 +216,7 @@ app.post('/submitQuiz', async (req, res) => {
     // start a transaction
     await db.query('BEGIN');
 
-// [ { question_id: 1, choice_id: 1 } ]
 
-    // const { quiz_id, user_id, answers } = quizData;
-    console.log(quizData);
-    // Calculate the score
     let score = 0;
     let user_id = null;
     let quiz_id = null;
@@ -198,7 +224,7 @@ app.post('/submitQuiz', async (req, res) => {
       user_id = answer.user_id;
       quiz_id = answer.quiz_id;
       const choiceResult = await db.query('SELECT * FROM Choices WHERE id = $1', [answer.choice_id]);
-      console.log({ choiceResult: choiceResult.rows});
+
       if (choiceResult.rows.length > 0 && choiceResult.rows[0].is_correct) {
         score++;
       }
@@ -210,8 +236,6 @@ app.post('/submitQuiz', async (req, res) => {
       'INSERT INTO QuizAttempts (quiz_id, user_id, score) VALUES ($1, $2, $3) RETURNING id',
       [quiz_id, user_id, score]
     );
-
-    console.log({ quizAttemptResult: quizAttemptResult.rows })
     const quizAttemptId = quizAttemptResult.rows[0].id;
 
     for (const answer of quizData) {
@@ -234,17 +258,17 @@ app.post('/submitQuiz', async (req, res) => {
 });
 
 app.get('/submitQuizzes', async (req, res) => {
-  const { user_id } = req.query;
+  const { user_id } = req.session;
 
   if(!user_id){
-    return res.status(400).json({ message: 'User ID is required.' });
+    return res.status(400).render('error', { message: 'User ID is required.' });
   }
 
   try {
     const quizAttemptsResult = await db.query('SELECT * FROM QuizAttempts WHERE user_id = $1', [user_id]);
 
     if(quizAttemptsResult.rows.length === 0){
-      return res.status(404).json({ message: 'No quiz attempts found for this user.' });
+      return res.status(404).render('error', { message: 'No quiz attempts found for this user.' });
     }
 
     const quizAttempts = quizAttemptsResult.rows;
@@ -262,11 +286,10 @@ app.get('/submitQuizzes', async (req, res) => {
       }
     }
 
-    res.status(200).json({ message: 'Quiz results fetched successfully', results });
-
+    res.status(200).render('submitQuizzes', { results });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).render('error', { message: 'Server error' });
   }
-});
 
+});

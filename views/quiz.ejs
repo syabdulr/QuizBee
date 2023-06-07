@@ -78,9 +78,6 @@
 
         <label for="description">Description:</label>
         <textarea id="description" name="description"></textarea>
-        <label for="description">Description:</label>
-        <textarea id="description" name="description"></textarea>
-
         <!-- Questions will be appended here -->
         <div id="questions"></div>
 
@@ -281,6 +278,7 @@
   $('body').html(quizHtml);
 
   $('#quizForm').submit(function(event) {
+    console.log("testtesttesttesttest");
     event.preventDefault();
     // get selected choices and prepare data for submission
     const answers = [];
@@ -309,7 +307,9 @@
   },
   error: function (error) {
     // handle error here
+    console.log(document.body); // Error
     console.error(error);
+
   }
 });
   });
