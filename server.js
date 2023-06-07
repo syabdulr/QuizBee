@@ -215,7 +215,7 @@ app.post("/displayQuizzes", (req, res) => {
     });
 });
 
-app.post("/submitQuiz", async (req, res) => {
+app.post("/submitQuiz", async (req, res) => { //pressing the submit button
   const quizData = req.body;
 
   try {
@@ -264,10 +264,10 @@ app.post("/submitQuiz", async (req, res) => {
   }
 });
 
-app.get("/submitQuizzes", async (req, res) => {
+app.get("/submitQuizzes", async (req, res) => { //display results
   const { user_id } = req.session;
-
   if (!user_id) {
+    res.redirect("/login");
     return res.status(400).render("error", { message: "User ID is required." });
   }
 
