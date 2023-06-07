@@ -79,19 +79,20 @@
       let questionIndex = 0;
 
       function addQuestion() {
-        const questionElement = $(`
-      <div>
-        <h2 class = "question-index">Question ${questionIndex + 1}</h2>
-        <button type="button" class="removeQuestion">Remove Question</button>
-        <button type="button" class="addChoice">Add Choice</button>
-        <h3>Question context:</h3>
-        <input type="text" id="question_text" name="question_text" required />
-        <div class="choices"></div>
-      </div>
+    const questionElement = $(`
+        <div>
+            <h2 class = "question-index"></h2>
+            <button type="button" class="removeQuestion">Remove Question</button>
+            <button type="button" class="addChoice">Add Choice</button>
+            <h3>Question context:</h3>
+            <input type="text" id="question_text" name="question_text" required />
+            <div class="choices"></div>
+        </div>
     `);
-        $("#questions").append(questionElement);
 
-        let choiceIndex = 0;
+    $("#questions").append(questionElement);
+
+    let choiceIndex = 0;
 
         function addChoice() {
           const choicesElement = questionElement.find(".choices");
@@ -112,13 +113,19 @@
 
         questionElement.find(".addChoice").click(addChoice);
         questionElement.find(".removeQuestion").click(function () {
-          questionElement.remove();
-        });
+    questionElement.remove();
+
+    // Renumber questions
+    renumberQuestions();
+});
+
 
         // Add a default choice
         addChoice();
 
         questionIndex++;
+        renumberQuestions();
+
       }
 
       $("#addQuestion").click(addQuestion);
@@ -182,6 +189,13 @@
           },
         });
       });
+
+      function renumberQuestions() {
+    $("#questions > div").each(function (index) {
+        $(this).find(".question-index").text(`Question ${index + 1}`);
+    });
+}
+
 
       $("#createQuizButton").click(function () {
         $("#newQuizForm").fadeToggle(750);
