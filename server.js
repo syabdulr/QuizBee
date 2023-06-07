@@ -78,13 +78,20 @@ app.post("/register", async (req, res) => {
 });
 
 app.get("/quizzes/new", (req, res) => {
+  const user_id = req.session.user_id;
+  if(!user_id){
+    return res.redirect('/login');
+  }
   res.render("quiz-create");
 });
 
 app.post("/quizzes", async (req, res) => {
+  const user_id = req.session.user_id;
+  if(!user_id){
+    return res.status(401).json({ message: "You need to be logged in to post a quiz." });
+  }
   console.log(req.body);
   const { title, description, question_text, questions } = req.body;
-
   try {
     // start a transaction
     await db.query("BEGIN");
@@ -215,18 +222,19 @@ app.post("/displayQuizzes", (req, res) => {
     });
 });
 
-app.post("/submitQuiz", async (req, res) => { //pressing the submit button
+app.post("/submitQuiz", async (req, res) => {
+  const user_id = req.session.user_id;
+  if(!user_id){
+    return res.status(401).json({ message: "You need to be logged in to submit a quiz." });
+  }
   const quizData = req.body;
-
   try {
     // start a transaction
     await db.query("BEGIN");
 
     let score = 0;
-    let user_id = null;
     let quiz_id = null;
     for (const answer of quizData) {
-      user_id = answer.user_id;
       quiz_id = answer.quiz_id;
       const choiceResult = await db.query(
         "SELECT * FROM Choices WHERE id = $1",
@@ -237,7 +245,6 @@ app.post("/submitQuiz", async (req, res) => { //pressing the submit button
         score++;
       }
     }
-
     // Store the quiz attempt and answers in the database
     const quizAttemptResult = await db.query(
       "INSERT INTO QuizAttempts (quiz_id, user_id, score) VALUES ($1, $2, $3) RETURNING id",
@@ -264,11 +271,10 @@ app.post("/submitQuiz", async (req, res) => { //pressing the submit button
   }
 });
 
-app.get("/submitQuizzes", async (req, res) => { //display results
-  const { user_id } = req.session;
+app.get("/submitQuizzes", async (req, res) => {
+  const user_id = req.session.user_id;
   if (!user_id) {
-    res.redirect("/login");
-    return res.status(400).render("error", { message: "User ID is required." });
+    return res.redirect("/login");
   }
 
   try {
@@ -279,8 +285,8 @@ app.get("/submitQuizzes", async (req, res) => { //display results
 
     if (quizAttemptsResult.rows.length === 0) {
       return res
-        .status(404)
-        .render("error", { message: "No quiz attempts found for this user." });
+        .status(200)
+        .render("submitQuizzes", { results: [], message: "No quiz attempts found for this user.", user_id });
     }
 
     const quizAttempts = quizAttemptsResult.rows;
@@ -306,3 +312,4 @@ app.get("/submitQuizzes", async (req, res) => { //display results
     res.status(500).render("error", { message: "Server error" });
   }
 });
+

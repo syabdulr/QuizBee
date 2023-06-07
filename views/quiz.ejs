@@ -26,6 +26,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script defer src="/scripts/app.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
 
 </head>
 
@@ -253,8 +255,8 @@
   $('body').html(quizHtml);
 
   $('#quizForm').submit(function(event) {
-    console.log("testtesttesttesttest");
     event.preventDefault();
+
     // get selected choices and prepare data for submission
     const answers = [];
     for (let i = 0; i < quiz.questions.length; i++) {
@@ -263,7 +265,7 @@
         answers.push({
           question_id: quiz.questions[i].id,
           choice_id: parseInt(selectedChoice),
-          user_id: user_id,         // hard coded but need to fix later
+          //user_id: 1,         // hard coded but need to fix later
           quiz_id: quiz.questions[i].quiz_id
         });
       }
@@ -278,7 +280,7 @@
   contentType: 'application/json',
   success: function (response) {
     // handle success here
-    //window.location.href = '/submitQuizzes'; // Redirect to the /submitQuizzes page
+    window.location.href = '/submitQuizzes'; // Redirect to the /submitQuizzes page
   },
   error: function (error) {
     // handle error here
