@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Quiz Results</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap"
+    rel="stylesheet" />
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+  <h1>Quiz Results</h1>
+  <div id="resultsList"></div>
+
+  <script>
+    // Fetch the results when the page is loaded
+    $(document).ready(function() {
+      $.ajax({
+        type: 'GET',
+        url: '/submitQuizzes',
+        success: function(data) {
+          const resultsListElement = $('<ul></ul>');
+          data.results.forEach(function (result) {
+            const resultItem = $('<li></li>').text(`Quiz Title: ${result.quiz_title}, Score: ${result.score}`);
+            resultsListElement.append(resultItem);
+          });
+          $('#resultsList').html(resultsListElement);
+        },
+        error: function(error) {
+          console.error(error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
