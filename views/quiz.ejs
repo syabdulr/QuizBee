@@ -1,80 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <title>Create Quiz</title>
 
-<head>
-  <title>Create Quiz</title>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
+    <link rel="stylesheet" href="/vendor/border-box.css" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/layout.css" />
+    <link rel="stylesheet" href="/styles/nav-bar.css" />
+    <link rel="stylesheet" href="/styles/quiz.css" />
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script defer src="/scripts/app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+  </head>
 
-  <!-- CSS -->
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
-  <link rel="stylesheet" href="/vendor/border-box.css" />
-  <link rel="stylesheet" href="/styles/main.css" />
-  <link rel="stylesheet" href="/styles/layout.css" />
-  <link rel="stylesheet" href="/styles/nav-bar.css" />
-  <link rel="stylesheet" href="/styles/quiz.css" />
-  <!-- JS -->
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <script defer src="/scripts/app.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-
-
-</head>
-
-<body>
+  <body>
     <%- include('./_header.ejs') %>
 
-
-  <main>
-    <div class="quizPageMenu">
-      <div class="text-center">
-        <button id="createQuizButton" class="btn btn-primary">Create New Quiz</button>
+    <main>
+      <div class="quizPageMenu">
+        <div class="text-center">
+          <button id="createQuizButton" class="btn btn-primary">
+            Create New Quiz
+          </button>
+        </div>
+        <div class="text-center2">
+          <button id="displayQuizzesButton" class="btn btn-primary">
+            Display Quizzes
+          </button>
+        </div>
       </div>
-      <div class="text-center2">
-        <button id="displayQuizzesButton" class="btn btn-primary">Display Quizzes</button>
+
+      <div id="newQuizForm" style="display: none">
+        <h1 class="create-new-quiz">Create a New Quiz</h1>
+        <form class="quiz" id="quizForm">
+          <label for="title">Quiz Title:</label>
+          <input type="text" id="title" name="title" required />
+
+          <label for="description">Quiz Description:</label>
+          <textarea id="description" name="description"></textarea>
+
+          <!-- Questions will be appended here -->
+          <button type="button" id="addQuestion">Add Question</button>
+          <div id="questions"></div>
+
+          <input class="createQuizBtn" type="submit" value="Create Quiz" />
+        </form>
       </div>
-    </div>
 
+      <div id="quizListContainer" style="display: none">
+        <div id="quizList"></div>
+      </div>
+    </main>
 
-    <div id="newQuizForm" style="display: none;">
-      <h1 class="create-new-quiz">Create a New Quiz</h1>
-      <form class="quiz" id="quizForm">
-        <label for="title">Quiz Title:</label>
-        <input type="text" id="title" name="title" required />
+    <script>
+      let questionIndex = 0;
 
-        <label for="description">Quiz Description:</label>
-        <textarea id="description" name="description"></textarea>
-
-        <!-- Questions will be appended here -->
-        <button type="button" id="addQuestion">Add Question</button>
-        <div id="questions"></div>
-
-
-        <input class="createQuizBtn" type="submit" value="Create Quiz" />
-      </form>
-    </div>
-
-
-    <div id="quizListContainer" style="display: none;">
-      <div id="quizList"></div>
-    </div>
-
-  </main>
-
-  <script>
-    let questionIndex = 0;
-
-    function addQuestion() {
-      const questionElement = $(`
+      function addQuestion() {
+        const questionElement = $(`
       <div>
         <h2 class = "question-index">Question ${questionIndex + 1}</h2>
         <button type="button" class="removeQuestion">Remove Question</button>
@@ -84,15 +89,17 @@
         <div class="choices"></div>
       </div>
     `);
-      $('#questions').append(questionElement);
+        $("#questions").append(questionElement);
 
-      let choiceIndex = 0;
+        let choiceIndex = 0;
 
-      function addChoice() {
-        const choicesElement = questionElement.find('.choices');
-        choicesElement.append(`
+        function addChoice() {
+          const choicesElement = questionElement.find(".choices");
+          choicesElement.append(`
         <div>
-          <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${choiceIndex + 1}:</label>
+          <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${
+            choiceIndex + 1
+          }:</label>
           <input type="text" id="questions[${questionIndex}].choices[${choiceIndex}].text"
             name="questions[${questionIndex}].choices[${choiceIndex}].text" required />
           <input type="checkbox" id="questions[${questionIndex}].choices[${choiceIndex}].is_correct"
@@ -100,209 +107,207 @@
           <label for="questions[${questionIndex}].choices[${choiceIndex}].is_correct">Correct</label>
         </div>
       `);
-        choiceIndex++;
+          choiceIndex++;
+        }
+
+        questionElement.find(".addChoice").click(addChoice);
+        questionElement.find(".removeQuestion").click(function () {
+          questionElement.remove();
+        });
+
+        // Add a default choice
+        addChoice();
+
+        questionIndex++;
       }
 
-      questionElement.find('.addChoice').click(addChoice);
-      questionElement.find('.removeQuestion').click(function () {
-        questionElement.remove();
-      });
+      $("#addQuestion").click(addQuestion);
 
-      // Add a default choice
-      addChoice();
+      // Add a default question
+      addQuestion();
 
-      questionIndex++;
-    }
+      // Handle form submission with jQuery and AJAX
+      $("#quizForm").submit(function (event) {
+        event.preventDefault(); // prevent the form from submitting normally
 
-    $('#addQuestion').click(addQuestion);
-
-    // Add a default question
-    addQuestion();
-
-    // Handle form submission with jQuery and AJAX
-    $('#quizForm').submit(function (event) {
-      event.preventDefault(); // prevent the form from submitting normally
-
-      // Prepare the quiz data structure
-      const quizData = {
-        title: $('#title').val(),
-        description: $('#description').val(),
-        question_text: $('#question_text').val(),
-        questions: []
-      };
-
-      // Iterate over each question element and collect the data
-      $('#questions > div').each(function () {
-        const questionElement = $(this);
-        const questionData = {
-          text: questionElement.find('input[name^="questions[\\d].text"]').val(),
-          choices: []
+        // Prepare the quiz data structure
+        const quizData = {
+          title: $("#title").val(),
+          description: $("#description").val(),
+          question_text: $("#question_text").val(),
+          questions: [],
         };
 
-        // Iterate over each choice element and collect the data
-        questionElement.find('.choices > div').each(function () {
-          const choiceElement = $(this);
-          const choiceData = {
-            // input[name^="questions[\\d].choices[\\d].text"]
-
-            text: choiceElement.find('input[type="text"]').val(),
-            is_correct: choiceElement.find('input[type="checkbox"]').prop('checked')
+        // Iterate over each question element and collect the data
+        $("#questions > div").each(function () {
+          const questionElement = $(this);
+          const questionData = {
+            text: questionElement
+              .find('input[name^="questions[\\d].text"]')
+              .val(),
+            choices: [],
           };
-          questionData.choices.push(choiceData);
+
+          // Iterate over each choice element and collect the data
+          questionElement.find(".choices > div").each(function () {
+            const choiceElement = $(this);
+            const choiceData = {
+              // input[name^="questions[\\d].choices[\\d].text"]
+
+              text: choiceElement.find('input[type="text"]').val(),
+              is_correct: choiceElement
+                .find('input[type="checkbox"]')
+                .prop("checked"),
+            };
+            questionData.choices.push(choiceData);
+          });
+
+          quizData.questions.push(questionData);
         });
 
-        quizData.questions.push(questionData);
+        // AJAX POST request code
+        $.ajax({
+          type: "POST",
+          url: "/quizzes",
+          data: JSON.stringify(quizData),
+          contentType: "application/json",
+          success: function (data) {
+            console.log(data);
+            $("#newQuizForm").hide();
+            loadQuizzes();
+            $("#quizForm").trigger("reset");
+          },
+          error: function (error) {
+            console.error(error);
+          },
+        });
       });
 
-      // AJAX POST request code
-      $.ajax({
-        type: 'POST',
-        url: '/quizzes',
-        data: JSON.stringify(quizData),
-        contentType: 'application/json',
-        success: function (data) {
-          console.log(data);
-          $('#newQuizForm').hide();
+      $("#createQuizButton").click(function () {
+        $("#newQuizForm").fadeToggle(750);
+        $("#quizListContainer").hide();
+      });
+
+      $("#displayQuizzesButton").click(function () {
+        $("#newQuizForm").hide();
+        const quizListContainer = $("#quizListContainer");
+        const isDisplayed = quizListContainer.is(":visible");
+
+        if (isDisplayed) {
+          // Hide the quiz list
+          quizListContainer.hide();
+        } else {
           loadQuizzes();
-          $("#quizForm").trigger('reset');
-        },
-        error: function (error) {
-          console.error(error);
         }
       });
-    });
 
-    $('#createQuizButton').click(function () {
-      $('#newQuizForm').toggle();
-    });
+      const loadQuizzes = function () {
+        const quizListContainer = $("#quizListContainer");
+        // Fetch the quizzes using AJAX
+        $.ajax({
+          type: "POST",
+          url: "/displayQuizzes",
+          success: function (data) {
+            // Create a container for the quizzes
+            const quizList = $("<div></div>");
+            data.quizzes.forEach(function (quiz) {
+              // Create a container for the quiz
+              const quizContainer = $('<div class="quiz-container"></div>');
+              // Create an element for the quiz title
+              const titleElement = $(`<h2>${quiz.title}</h2>`);
+              // Create an element for the quiz description
+              const descriptionElement = $(`<p>${quiz.description}</p>`);
+              // Append the title and description to the quiz container
+              quizContainer.append(titleElement, descriptionElement);
 
+              // Add a click event listener to the quiz container
+              quizContainer.click(function () {
+                // Load the selected quiz
+                loadQuiz(quiz);
+              });
 
-    $('#displayQuizzesButton').click(function () {
-    const quizListContainer = $('#quizListContainer');
-    const isDisplayed = quizListContainer.is(':visible');
-
-    if (isDisplayed) {
-      // Hide the quiz list
-      quizListContainer.hide();
-    } else {
-      loadQuizzes();
-    }
-  });
-
-  const loadQuizzes = function() {
-    const quizListContainer = $('#quizListContainer');
-  // Fetch the quizzes using AJAX
-  $.ajax({
-    type: 'POST',
-    url: '/displayQuizzes',
-    success: function (data) {
-      // Create a container for the quizzes
-      const quizList = $('<div></div>');
-      data.quizzes.forEach(function (quiz) {
-        // Create a container for the quiz
-        const quizContainer = $('<div class="quiz-container"></div>');
-        // Create an element for the quiz title
-        const titleElement = $(`<h2>${quiz.title}</h2>`);
-        // Create an element for the quiz description
-        const descriptionElement = $(`<p>${quiz.description}</p>`);
-        // Append the title and description to the quiz container
-        quizContainer.append(titleElement, descriptionElement);
-
-        // Add a click event listener to the quiz container
-        quizContainer.click(function() {
-          // Load the selected quiz
-          loadQuiz(quiz);
+              // Append the quiz container to the quiz list
+              quizList.append(quizContainer);
+            });
+            // Append the quiz list to the container and show it
+            quizListContainer.html(quizList).fadeIn(750);
+          },
+          error: function (error) {
+            console.error(error);
+          },
         });
+      };
 
-        // Append the quiz container to the quiz list
-        quizList.append(quizContainer);
-      });
-      // Append the quiz list to the container and show it
-      quizListContainer.html(quizList).show();
-    },
-    error: function (error) {
-      console.error(error);
-    }
-  })
-  };
-
-  function loadQuiz(quiz) {
-    console.log({ quiz })
-    let quizHtml = `
+      function loadQuiz(quiz) {
+        console.log({ quiz });
+        let quizHtml = `
     <h1 class= "quiz-title">${quiz.title}</h1>
     <p class= "quiz-description">${quiz.description}</p>
     <form id="quizForm">
   `;
 
-  quiz.questions.forEach((question, questionIndex) => {
-    let questionHtml = `
+        quiz.questions.forEach((question, questionIndex) => {
+          let questionHtml = `
       <div class="question">
         <h2>Question ${questionIndex + 1}: ${question.question_text}</h2>
     `;
 
-    question.choices.forEach((choice, choiceIndex) => {
-      questionHtml += `
+          question.choices.forEach((choice, choiceIndex) => {
+            questionHtml += `
         <div class="choice">
           <input type="radio" id="q${questionIndex}c${choiceIndex}" name="q${questionIndex}" value="${choice.id}">
           <label for="q${questionIndex}c${choiceIndex}">${choice.choice_text}</label>
         </div>
       `;
-    });
+          });
 
-    questionHtml += '</div>';
-    quizHtml += questionHtml;
-  });
+          questionHtml += "</div>";
+          quizHtml += questionHtml;
+        });
 
-  quizHtml += `
+        quizHtml += `
     <button class="submit-button" type="submit">Submit Quiz</button>
     </form>
   `;
 
-  $('body').html(quizHtml);
+        $("body").html(quizHtml);
 
-  $('#quizForm').submit(function(event) {
-    event.preventDefault();
+        $("#quizForm").submit(function (event) {
+          event.preventDefault();
 
-    // get selected choices and prepare data for submission
-    const answers = [];
-    for (let i = 0; i < quiz.questions.length; i++) {
-      const selectedChoice = $(`input[name="q${i}"]:checked`).val();
-      if (selectedChoice) {
-        answers.push({
-          question_id: quiz.questions[i].id,
-          choice_id: parseInt(selectedChoice),
-          //user_id: 1,         // hard coded but need to fix later
-          quiz_id: quiz.questions[i].quiz_id
+          // get selected choices and prepare data for submission
+          const answers = [];
+          for (let i = 0; i < quiz.questions.length; i++) {
+            const selectedChoice = $(`input[name="q${i}"]:checked`).val();
+            if (selectedChoice) {
+              answers.push({
+                question_id: quiz.questions[i].id,
+                choice_id: parseInt(selectedChoice),
+                //user_id: 1,         // hard coded but need to fix later
+                quiz_id: quiz.questions[i].quiz_id,
+              });
+            }
+          }
+          // submit answers here
+          console.log(answers);
+          //Uncomment below when you have setup the API endpoint to submit the quiz.
+          $.ajax({
+            type: "POST",
+            url: "/submitQuiz",
+            data: JSON.stringify(answers),
+            contentType: "application/json",
+            success: function (response) {
+              // handle success here
+              window.location.href = "/submitQuizzes"; // Redirect to the /submitQuizzes page
+            },
+            error: function (error) {
+              // handle error here
+              console.log(document.body); // Error
+              console.error(error);
+            },
+          });
         });
       }
-    }
-    // submit answers here
-    console.log(answers);
-    //Uncomment below when you have setup the API endpoint to submit the quiz.
-    $.ajax({
-  type: 'POST',
-  url: '/submitQuiz',
-  data: JSON.stringify(answers),
-  contentType: 'application/json',
-  success: function (response) {
-    // handle success here
-    window.location.href = '/submitQuizzes'; // Redirect to the /submitQuizzes page
-  },
-  error: function (error) {
-    // handle error here
-    console.log(document.body); // Error
-    console.error(error);
-
-  }
-});
-  });
-}
-
-
-
-
-  </script>
-
-</body>
-
+    </script>
+  </body>
 </html>
