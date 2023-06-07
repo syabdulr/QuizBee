@@ -19,7 +19,7 @@
 </head>
 
 <body>
-  <%- include('./_header.ejs') %>
+  <%- include('./_header.ejs', {user_id: user_id}) %>
   <main>
 <h1 class="greeting">Quiz Results ❗</h1>
     <div id="resultsList"></div>

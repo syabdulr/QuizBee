@@ -300,7 +300,7 @@ app.get("/submitQuizzes", async (req, res) => {
       }
     }
 
-    res.status(200).render("submitQuizzes", { results });
+    res.status(200).render("submitQuizzes", { results, user_id });
   } catch (err) {
     console.error(err);
     res.status(500).render("error", { message: "Server error" });
