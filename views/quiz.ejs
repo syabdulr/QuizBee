@@ -8,10 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap" 
-    rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap" rel="stylesheet">
 
   <!-- CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
@@ -270,7 +269,7 @@
         answers.push({
           question_id: quiz.questions[i].id,
           choice_id: parseInt(selectedChoice),
-          user_id: user_id,         // hard coded but need to fix later
+          user_id: 1,         // hard coded but need to fix later
           quiz_id: quiz.questions[i].quiz_id
         });
       }
@@ -285,7 +284,7 @@
   contentType: 'application/json',
   success: function (response) {
     // handle success here
-    //window.location.href = '/submitQuizzes'; // Redirect to the /submitQuizzes page
+    window.location.href = '/submitQuizzes'; // Redirect to the /submitQuizzes page
   },
   error: function (error) {
     // handle error here
