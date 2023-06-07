@@ -1,15 +1,13 @@
 .navbar-brand {
-  color:rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
   border-radius: 3px;
   padding: 5px;
-  font-family: 'Bungee', 'cursive';
+  font-family: "Bungee", "cursive";
   font-size: 35px;
-
 }
 .navbar-nav {
   margin-left: auto;
 }
-
 
 .nav-linkHome {
   color: black;
@@ -38,7 +36,6 @@
   font-size: 1.2em;
 }
 
-
 .nav-linkHome:hover {
   color: #ffe100;
   box-shadow: 0px 5px 0px #ffe100;
@@ -54,10 +51,10 @@
   box-shadow: 0px 5px 0px #ffe100;
 }
 .btnPrimary {
-  background-color: #3A3637;
-  color:rgb(255, 255, 255);
+  background-color: #3a3637;
+  color: rgb(255, 255, 255);
   border-radius: 4.5px;
-  font-family: 'Bungee', 'cursive';
+  font-family: "Bungee", "cursive";
   font-size: 0.8em;
   margin-right: 15px;
   margin-bottom: 15px;
@@ -66,9 +63,9 @@
 
 .btnSecondary {
   background-color: #992409;
-  color:rgb(255, 255, 255);
+  color: rgb(255, 255, 255);
   border-radius: 4.5px;
-  font-family: 'Bungee', 'cursive';
+  font-family: "Bungee", "cursive";
   font-size: 0.8em;
   margin-top: 15px;
   padding: 0.5em;
@@ -82,4 +79,8 @@
 .btnPrimary:hover {
   color: #ffe100;
   box-shadow: 2px 5px 2px #ffe100;
+}
+
+a {
+  white-space: nowrap;
 }
