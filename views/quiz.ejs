@@ -55,15 +55,13 @@
 
         <label for="description">Description:</label>
         <textarea id="description" name="description"></textarea>
-        <label for="description">Description:</label>
-        <textarea id="description" name="description"></textarea>
 
         <!-- Questions will be appended here -->
         <button type="button" id="addQuestion">Add Question</button>
         <div id="questions"></div>
 
 
-        <input type="submit" value="Create Quiz" />
+        <input class="createQuizBtn" type="submit" value="Create Quiz" />
       </form>
     </div>
 
@@ -82,9 +80,8 @@
       <div>
         <h2>Question ${questionIndex + 1}</h2>
         <button type="button" class="removeQuestion">Remove Question</button>
-        <label for="questions[${questionIndex}].text">Question:</label>
-        <input type="text" id="question_text" name="question_text" required />
         <button type="button" class="addChoice">Add Choice</button>
+        <input type="text" id="question_text" name="question_text" required />
         <div class="choices"></div>
       </div>
     `);
