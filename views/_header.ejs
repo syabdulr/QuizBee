@@ -19,10 +19,18 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- <script>
+      const blastSound = new Audio("/media/blastSound.mp3");
+      const removeQuestion = new Audio("/media/removeQuestion.mp3");
+      const addChoice = new Audio("/media/addChoice.mp3")
+    </script> -->
+
+
     <div class="collapse navbar-collapse " id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-linkHome " href="/"> 🏠 Home</a>
+          <a class="nav-linkHome" href="/" onclick="event.preventDefault(); homeSound.play();">🏠 Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-linkQuizzes" href="/quizzes"> 📝 Quizzes</a>
@@ -48,3 +56,38 @@
     </div>
   </nav>
 </header>
+
+    <script>
+      function playSound(soundFile) {
+        const audio = new Audio(soundFile);
+        audio.play();
+        console.log(soundFile);
+      }
+
+      const homeLink = document.querySelector('.nav-linkHome');
+      const quizLink = document.querySelector('.nav-linkQuizzes');
+      const resultLink = document.querySelector('.nav-linkResults');
+      const homeSound = new Audio("/media/navBtns.mp3");
+      const quizSound = new Audio("/media/navBtns.mp3");
+      const resultSound = new Audio("/media/navBtns.mp3");
+
+      homeLink.addEventListener('click', function() {
+        playSound(homeSound);
+      });
+
+      quizLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        quizSound.play();
+        setTimeout(() => {
+          window.location.href = event.target.getAttribute('href');
+        }, 325);
+      });
+
+      resultLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        resultSound.play();
+        setTimeout(() => {
+          window.location.href = event.target.getAttribute('href');
+        }, 325);
+      });
+    </script>

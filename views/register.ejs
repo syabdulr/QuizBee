@@ -28,6 +28,11 @@
     const blastSound = new Audio("/media/blastSound.mp3");
     const removeQuestion = new Audio("/media/removeQuestion.mp3");
     const addChoice = new Audio("/media/addChoice.mp3")
+
+    const registerButton = document.querySelector('.btnPrimary');
+    registerButton.addEventListener('click', function() {
+      blastSound.play();
+    });
   </script>
 
 </head>
@@ -48,7 +53,7 @@
           <label for="password">Password:</label>
           <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button onclick="blastSound.play()" type="submit" class="btnPrimary">Register</button>
+        <button type="submit" class="btnPrimary">Register</button>
       </form>
     </div>
   </main>
