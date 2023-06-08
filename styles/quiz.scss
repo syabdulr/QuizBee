@@ -14,6 +14,7 @@ body {
       margin-bottom: 5vh;
       margin-top:5vh;
       border-radius: 25px;
+      height: 7vh;
     }
     form {
       margin: 10vh 10vw;
@@ -52,6 +53,7 @@ input.submit {
 label {
   font-size: 1.5em;
 }
+
 div.quizPageMenu {
   margin: 10vh 10vw;
 
@@ -108,6 +110,7 @@ div.quizPageMenu {
 }
 .createQuizBtn {
   font-family: "Bungee", "cursive";
+  height: 7vh;
 }
 
 .removeQuestion {
@@ -171,11 +174,15 @@ button.removeQuestion {
     justify-content: center;
   }
   button.submit-button {
-    height: fit-content;
-    margin-left: 1em;
-    width: fit-content;
-    margin-top: 0.2em;
-    border-radius: 13px;
+    width: 90%;
+    border-radius: 25px;
+    margin-bottom: 1em;
+    font-weight: 800;
+    font-size: 20px;
+    height: 5vh;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    margin-left: 4em;
   }
   button.submit-button:hover {
     transition: 500ms;
@@ -188,7 +195,8 @@ button.removeQuestion {
     flex-direction: column;
     }
   div.choice {
-    margin-left: 1em;
+    margin-left: 3em;
+    font-size: 1.1em;
   }
 
 button {
@@ -204,4 +212,19 @@ input.createQuizBtn:hover {
 }
 #question_text {
   height: 13vh;
+}
+input.submitQuizBtn {
+  font-family: "Bungee", "cursive";
+}
+input.submitQuizBtn:hover {
+  transition: 500ms;
+  color: rgb(126, 173, 56);
+  border-color: rgb(126, 173, 56);
+
+}
+.table {
+  padding: 1em;
+  width: 95%;
+  margin: 1em;
+  margin-bottom: 1rem;
 }
