@@ -25,18 +25,19 @@
   <script defer src="/scripts/app.js"></script>
 </head>
 
+<!-- <script>
+  const blastSound = new Audio("/media/blastSound.mp3");
+  const removeQuestion = new Audio("/media/removeQuestion.mp3");
+  const addChoice = new Audio("/media/addChoice.mp3")
+</script> -->
+
 <body>
-
-  <script>
-    const quizbee = new Audio("/media/quizbee.mp3");
-  </script>
-
-
   <%- include('./_header.ejs') %>
+
   <main>
     <div class="container">
       <h1>Login</h1>
-      <form action="/login" method="post">
+      <form id="loginForm" action="/login" method="post">
         <div class="form-group">
           <label for="email">Email:</label>
           <input type="email" class="form-control" id="email" name="email" required>
@@ -45,10 +46,42 @@
           <label for="password">Password:</label>
           <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btnPrimary">Login</button>
+        <button type="submit" class="btnPrimary" id="loginPrimary">Login</button>
       </form>
     </div>
   </main>
 </body>
 
 </html>
+<!--
+<script>
+  // function playSound(soundFile) {
+  //   const audio = new Audio(soundFile);
+  //   audio.play();
+  // }
+
+
+  // const loginBtn = document.querySelector('#loginPrimary');
+  // const loginBtnSound = new Audio("../media/navBtns.mp3");
+  //   console.log(loginBtn);
+  // loginBtn.addEventListener('click', function(event) {
+  //   console.log("here");
+  //   event.preventDefault();
+  //   loginBtnSound.play();
+    // setTimeout(() => {
+    //   window.location.href = event.target.getAttribute('loginPrimary');
+    // }, 325);
+  });
+</script> -->
+
+<script>
+  const blastSound = new Audio("/media/blastSound.mp3");
+  const loginForm = document.getElementById("loginForm")
+  loginForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    blastSound.play();
+    blastSound.onended = function() {
+      loginForm.submit();
+    }
+  })
+</script>

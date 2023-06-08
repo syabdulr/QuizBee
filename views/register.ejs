@@ -24,23 +24,13 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script defer src="/scripts/app.js"></script>
 
-  <script>
-    const blastSound = new Audio("/media/blastSound.mp3");
-    const removeQuestion = new Audio("/media/removeQuestion.mp3");
-    const addChoice = new Audio("/media/addChoice.mp3")
-
-    const registerButton = document.querySelector('.btnPrimary');
-    registerButton.addEventListener('click', function() {
-      blastSound.play();
-    });
-  </script>
 
 </head>
 <body>
   <main>
     <div class="container">
       <h1>Create an Account</h1>
-      <form action="/register" method="post">
+      <form id="registerForm" action="/register" method="post">
         <div class="form-group">
           <label for="name">Name:</label>
           <input type="text" class="form-control" id="name" name="name" required>
@@ -60,3 +50,15 @@
 </body>
 
 </html>
+
+  <script>
+    const blastSound = new Audio("/media/blastSound.mp3");
+    const registerForm = document.getElementById("registerForm")
+    registerForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      blastSound.play();
+      blastSound.onended = function() {
+        registerForm.submit();
+      }
+    })
+  </script>
