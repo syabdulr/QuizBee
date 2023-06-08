@@ -38,27 +38,51 @@ app.use(
   })
 );
 
-// app.use('/api/users', userApiRoutes); // If you have user API routes, you can include them here
-
 // Home page
 app.get("/", (req, res) => {
   const user_id = req.session.user_id; // Get user_id from session
   res.render("index", { user_id }); // Pass user_id as a local variable to your EJS file
 });
 
-app.get("/quizzes", (req, res) => {
-  const user_id = req.session.user_id;
-
-  if (!user_id) {
-    return res.redirect("/register");
-  }
-  res.render("quiz", { user_id: req.session.user_id });
+// Render login page
+app.get("/login", (req, res) => {
+  res.render("login", { user_id: req.session.user_id });
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`);
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  db.query("SELECT * FROM Users WHERE email = $1", [email])
+    .then(async (result) => {
+      if (result.rows.length > 0) {
+        const user = result.rows[0]; // store the user object
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+          // Passwords match
+          // Set the user_id in the session
+          req.session.user_id = user.id;
+          res.redirect("/");
+        } else {
+          // Passwords don't match
+          res.status(401).send("Invalid credentials");
+        }
+      } else {
+        // No user with the provided email
+        res.status(401).send("Invalid credentials");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Server error");
+    });
 });
 
+app.get("/logout", (req, res) => {
+  req.session = null;
+  res.redirect("/");
+});
+
+// Render registration page
 app.get("/register", (req, res) => {
   res.render("register", { user_id: req.session.user_id });
 });
@@ -81,6 +105,16 @@ app.post("/register", async (req, res) => {
     });
 });
 
+// Protected route for quizzes
+app.get("/quizzes", (req, res) => {
+  const user_id = req.session.user_id;
+
+  if (!user_id) {
+    return res.redirect("/login");
+  }
+  res.render("quiz", { user_id });
+});
+
 app.get("/quizzes/new", (req, res) => {
   const user_id = req.session.user_id;
   if (!user_id) {
@@ -97,17 +131,13 @@ app.get("/quizzes", (req, res) => {
 
 app.post("/quizzes", async (req, res) => {
   const user_id = req.session.user_id;
-  if (!user_id) {
-    return res
-      .status(401)
-      .json({ message: "You need to be logged in to post a quiz." });
+  if(!user_id){
+    return res.status(401).json({ message: "You need to be logged in to post a quiz." });
   }
-  //console.log(req.body);
   const { title, description, question_text, questions } = req.body;
   try {
     // start a transaction
     await db.query("BEGIN");
-    //console.log("QUESTIONS ------------------------", questions);
 
     const quizResult = await db.query(
       "INSERT INTO Quizzes (title, description, is_public, creator_id) VALUES ($1, $2, $3, $4) RETURNING id",
@@ -122,10 +152,9 @@ app.post("/quizzes", async (req, res) => {
         return;
       }
     }
-    console.log("THE QUESTIONS ARE -------------- LINE 113", questions);
+    console.log("THE QUESTIONS ARE -------------- LINE 113",questions);
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
-      //console.log({ question});
       const questionResult = await db.query(
         "INSERT INTO Questions (quiz_id, question_text) VALUES ($1, $2) RETURNING id",
         [quizId, question.text]
@@ -138,7 +167,6 @@ app.post("/quizzes", async (req, res) => {
           "INSERT INTO Choices (question_id, choice_text, is_correct) VALUES ($1, $2, $3)",
           [questionId, choice.text, choice.is_correct]
         );
-        //console.log(choice);
       }
     }
 
@@ -154,50 +182,45 @@ app.post("/quizzes", async (req, res) => {
   }
 });
 
-// Render login page
-app.get("/login", function (req, res) {
-  res.render("login", { user_id: req.session.user_id });
-});
+app.get("/quiz/:id", async (req, res) => {
+  const user_id = req.session.user_id;
+  if (!user_id) {
+    return res.redirect("/login");
+  }
 
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  // Get the quiz id from the request parameters
+  const quiz_id = req.params.id;
 
-  console.log("REQUESTTT--------------", req.body);
+  // Fetch the specific quiz from the database
+  try {
+    const result = await db.query("SELECT * FROM Quizzes WHERE id = $1", [quiz_id]);
 
-  db.query("SELECT * FROM Users WHERE email = $1", [email])
-    .then(async (result) => {
-      if (result.rows.length > 0) {
-        const user = result.rows[0]; // store the user object
-        console.log("user is ", user.id);
-        const match = await bcrypt.compare(password, user.password);
-        console.log("session is", req.session);
-        // res.cookie("userInfo", user_id); remove this
-        if (match) {
-          // Passwords match
-          // set the cookie using cookie-session
-          req.session.user_id = user.id; // This will set the cookie
+    if (result.rows.length > 0) {
+      let quiz = result.rows[0];
 
-          const userId = user.id;
-          // id = user_id;
-          res.redirect("/");
-        } else {
-          // Passwords don't match
-          res.status(401).send("Invalid credentials");
+      // Fetch the questions for this quiz
+      const questionsResult = await db.query("SELECT * FROM Questions WHERE quiz_id = $1", [quiz_id]);
+
+      if (questionsResult.rows.length > 0) {
+        quiz.questions = questionsResult.rows;
+        for (let i = 0; i < quiz.questions.length; i++) {
+          // Fetch the choices for each question
+          const choicesResult = await db.query("SELECT * FROM Choices WHERE question_id = $1", [quiz.questions[i].id]);
+          if (choicesResult.rows.length > 0) {
+            quiz.questions[i].choices = choicesResult.rows;
+          }
         }
-      } else {
-        // No user with the provided email
-        res.status(401).send("Invalid credentials");
       }
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Server error");
-    });
-});
-
-app.get("/logout", function (req, res) {
-  req.session = null;
-  res.redirect("/");
+      // Render the quiz page with the specific quiz data
+      res.render("quizView", { quiz, user_id });
+    } else {
+      // If no quiz found, redirect back to quizzes page
+      res.redirect("/quizzes");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
 
 app.post("/displayQuizzes", (req, res) => {
@@ -234,9 +257,7 @@ app.post("/displayQuizzes", (req, res) => {
 app.post("/submitQuiz", async (req, res) => {
   const user_id = req.session.user_id;
   if (!user_id) {
-    return res
-      .status(401)
-      .json({ message: "You need to be logged in to submit a quiz." });
+    return res.status(401).json({ message: "You need to be logged in to submit a quiz." });
   }
   const quizData = req.body;
   try {
@@ -328,51 +349,6 @@ app.get("/submitQuizzes", async (req, res) => {
   }
 });
 
-app.get("/quiz/:id", async (req, res) => {
-  const user_id = req.session.user_id;
-  if (!user_id) {
-    return res.redirect("/login");
-  }
-
-  // Get the quiz id from the request parameters
-  const quiz_id = req.params.id;
-
-  // Fetch the specific quiz from the database
-  try {
-    const result = await db.query("SELECT * FROM Quizzes WHERE id = $1", [
-      quiz_id,
-    ]);
-
-    if (result.rows.length > 0) {
-      let quiz = result.rows[0];
-
-      // Fetch the questions for this quiz
-      const questionsResult = await db.query(
-        "SELECT * FROM Questions WHERE quiz_id = $1",
-        [quiz_id]
-      );
-
-      if (questionsResult.rows.length > 0) {
-        quiz.questions = questionsResult.rows;
-        for (let i = 0; i < quiz.questions.length; i++) {
-          // Fetch the choices for each question
-          const choicesResult = await db.query(
-            "SELECT * FROM Choices WHERE question_id = $1",
-            [quiz.questions[i].id]
-          );
-          if (choicesResult.rows.length > 0) {
-            quiz.questions[i].choices = choicesResult.rows;
-          }
-        }
-      }
-      // Render the quiz page with the specific quiz data
-      res.render("viewQuiz", { quiz, user_id });
-    } else {
-      // If no quiz found, redirect back to quizzes page
-      res.redirect("/quizzes");
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
-  }
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });

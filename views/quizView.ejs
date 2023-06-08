@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Create Quiz</title>
+
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Bungee&family=Source+Sans+Pro:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" />
+    <link rel="stylesheet" href="/vendor/border-box.css" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/layout.css" />
+    <link rel="stylesheet" href="/styles/nav-bar.css" />
+    <link rel="stylesheet" href="/styles/quiz.css" />
+    <!-- JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script defer src="/scripts/app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+  </head>
+
+  <body>
+    <%- include('./_header.ejs', {user_id: user_id}) %>
+    <main>
+      <div id="quizView" style="display: block">
+        <h1 class="quiz-title"><%= quiz.title %></h1>
+        <p class="quiz-description"><%= quiz.description %></p>
+        <form class="quiz" id="quizForm">
+          <% quiz.questions.forEach((question, questionIndex) => { %>
+            <div class="question" data-question-id="<%= question.id %>">
+              <h2>Question <%= questionIndex + 1 %>: <%= question.question_text %></h2>
+              <% question.choices.forEach((choice, choiceIndex) => { %>
+                <div class="choice">
+                  <input type="radio" id="q<%= questionIndex %>c<%= choiceIndex %>" name="q<%= questionIndex %>" value="<%= choice.id %>">
+                  <label for="q<%= questionIndex %>c<%= choiceIndex %>"><%= choice.choice_text %></label>
+                </div>
+              <% }) %>
+            </div>
+          <% }) %>
+          <input class="submitQuizBtn" type="submit" value="Submit Quiz" />
+        </form>
+      </div>
+    </main>
+
+    <script>
+      // Handle form submission with jQuery and AJAX
+      $("#quizForm").submit(function (event) {
+        event.preventDefault(); // prevent the form from submitting normally
+
+        // Prepare the quiz data structure
+        const answers = [];
+
+        // Iterate over each checked radio element and collect the data
+        $('input[type=radio]:checked').each(function () {
+          const questionDiv = $(this).closest(".question");
+          const questionId = questionDiv.data("question-id");  // get question id from data attribute
+          const choiceId = parseInt($(this).val());
+
+          const answer = {
+            question_id: questionId,
+            choice_id: choiceId,
+            quiz_id: "<%= quiz.id %>", // put quiz id directly into the script
+            //user_id: "<%= user_id %>",  // you may need to get the user_id dynamically, possibly from a hidden input field in your form
+          };
+
+          answers.push(answer);
+        });
+
+        // AJAX POST request code
+        $.ajax({
+          type: "POST",
+          url: "/submitQuiz",
+          data: JSON.stringify(answers),
+          contentType: "application/json",
+          success: function (data) {
+            alert(`Quiz submitted successfully! Your score is ${data.score}`);
+            window.location.href = "/submitQuizzes";
+          },
+          error: function (error) {
+            console.error(error);
+          },
+        });
+      });
+      </script>
+
+  </body>
+</html>
