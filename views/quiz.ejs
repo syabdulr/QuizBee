@@ -74,8 +74,7 @@
           <!-- Questions will be appended here -->
           <button onclick="blastSound.play()" type="button" id="addQuestion">Add Question</button>
           <div id="questions"></div>
-
-          <input onclick="blastSound.play()" class="createQuizBtn" type="submit" value="Create Quiz" />
+          <input class="createQuizBtn" type="submit" value="Create Quiz" />
         </form>
       </div>
 
@@ -144,6 +143,7 @@
 
       // Handle form submission with jQuery and AJAX
       $("#quizForm").submit(function (event) {
+        blastSound.play();
         event.preventDefault(); // prevent the form from submitting normally
 
         // Prepare the quiz data structure

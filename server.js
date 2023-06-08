@@ -166,7 +166,6 @@ app.post("/login", async (req, res) => {
           // Passwords match
           // set the cookie using cookie-session
           req.session.user_id = user.id; // This will set the cookie
-
           const userId = user.id;
           // id = user_id;
           res.redirect("/");
