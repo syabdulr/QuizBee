@@ -1,5 +1,4 @@
 
-﻿
 # Quiz App
 
 The Quiz App is a web application that lets you create and share quizzes with your friends. The creator of the quiz can view and share all the results at the end of the quiz.
