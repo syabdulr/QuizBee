@@ -46,5 +46,20 @@
         </tbody>
       </table>
   </main>
+
+  <script>
+    function playSound(soundFile) {
+      const audio = new Audio(soundFile);
+      audio.play();
+      console.log(soundFile);
+    }
+
+    const pageLoadSound = new Audio("/media/hvrHome.mp3");
+
+    // Play sound effect when the page is loaded
+    $(document).ready(function() {
+      playSound("/media/hvrHome.mp3");
+    });
+  </script>
 </body>
 </html>
