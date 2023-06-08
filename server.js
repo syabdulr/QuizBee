@@ -91,7 +91,6 @@ app.post("/quizzes", async (req, res) => {
       .status(401)
       .json({ message: "You need to be logged in to post a quiz." });
   }
-  console.log(req.body);
   const { title, description, question_text, questions } = req.body;
   try {
     // start a transaction
@@ -303,6 +302,7 @@ app.get("/submitQuizzes", async (req, res) => {
         const quiz = quizResult.rows[0];
         results.push({
           quiz_id: quiz.id,
+          // eslint-disable-next-line camelcase
           quiz_title: quiz.title,
           score: attempt.score,
         });
