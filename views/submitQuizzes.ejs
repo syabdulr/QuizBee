@@ -30,21 +30,21 @@
   <main>
     <h1 class="greeting">Quiz Results ❗</h1>
     <table class="table">
-        <thead>
+      <thead>
+        <tr>
+          <th scope="col">Quiz Title</th>
+          <th scope="col">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let result of results) { %>
           <tr>
-            <th scope="col">Quiz Title</th>
-            <th scope="col">Score</th>
+            <td><a href="/quiz/<%= result.quiz_id %>"><%= result.quiz_title %></a></td>
+            <td><%= result.score %></td>
           </tr>
-        </thead>
-        <tbody>
-          <% for (let result of results) { %>
-            <tr>
-              <td><%= result.quiz_title %></td>
-              <td><%= result.score %></td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
+        <% } %>
+      </tbody>
+    </table>
   </main>
 </body>
 </html>
