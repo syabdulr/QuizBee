@@ -90,15 +90,15 @@
           data: JSON.stringify(answers),
           contentType: "application/json",
           success: function (data) {
-            console.log(data);
             alert(`Quiz submitted successfully! Your score is ${data.score}`);
+            window.location.href = "/submitQuizzes";
           },
           error: function (error) {
             console.error(error);
           },
         });
       });
-    </script>
+      </script>
 
   </body>
 </html>
