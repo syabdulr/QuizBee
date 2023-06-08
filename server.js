@@ -46,7 +46,6 @@ app.get("/", (req, res) => {
   res.render("index", { user_id }); // Pass user_id as a local variable to your EJS file
 });
 
-
 app.get("/quizzes", (req, res) => {
   const user_id = req.session.user_id;
 
@@ -84,8 +83,8 @@ app.post("/register", async (req, res) => {
 
 app.get("/quizzes/new", (req, res) => {
   const user_id = req.session.user_id;
-  if(!user_id){
-    return res.redirect('/login');
+  if (!user_id) {
+    return res.redirect("/login");
   }
   res.render("quiz-create");
 });
@@ -98,8 +97,10 @@ app.get("/quizzes", (req, res) => {
 
 app.post("/quizzes", async (req, res) => {
   const user_id = req.session.user_id;
-  if(!user_id){
-    return res.status(401).json({ message: "You need to be logged in to post a quiz." });
+  if (!user_id) {
+    return res
+      .status(401)
+      .json({ message: "You need to be logged in to post a quiz." });
   }
   //console.log(req.body);
   const { title, description, question_text, questions } = req.body;
@@ -121,7 +122,7 @@ app.post("/quizzes", async (req, res) => {
         return;
       }
     }
-    console.log("THE QUESTIONS ARE -------------- LINE 113",questions);
+    console.log("THE QUESTIONS ARE -------------- LINE 113", questions);
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
       //console.log({ question});
@@ -154,10 +155,9 @@ app.post("/quizzes", async (req, res) => {
 });
 
 // Render login page
-app.get('/login', function(req, res) {
-  res.render('login', { user_id: req.session.user_id });
+app.get("/login", function (req, res) {
+  res.render("login", { user_id: req.session.user_id });
 });
-
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -195,11 +195,10 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.get('/logout', function(req, res){
+app.get("/logout", function (req, res) {
   req.session = null;
-  res.redirect('/');
+  res.redirect("/");
 });
-
 
 app.post("/displayQuizzes", (req, res) => {
   // Fetch quizzes from the database
@@ -234,8 +233,10 @@ app.post("/displayQuizzes", (req, res) => {
 
 app.post("/submitQuiz", async (req, res) => {
   const user_id = req.session.user_id;
-  if(!user_id){
-    return res.status(401).json({ message: "You need to be logged in to submit a quiz." });
+  if (!user_id) {
+    return res
+      .status(401)
+      .json({ message: "You need to be logged in to submit a quiz." });
   }
   const quizData = req.body;
   try {
@@ -296,7 +297,11 @@ app.get("/submitQuizzes", async (req, res) => {
     if (quizAttemptsResult.rows.length === 0) {
       return res
         .status(200)
-        .render("submitQuizzes", { results: [], message: "No quiz attempts found for this user.", user_id });
+        .render("submitQuizzes", {
+          results: [],
+          message: "No quiz attempts found for this user.",
+          user_id,
+        });
     }
 
     const quizAttempts = quizAttemptsResult.rows;
@@ -310,7 +315,6 @@ app.get("/submitQuizzes", async (req, res) => {
         const quiz = quizResult.rows[0];
         results.push({
           quiz_id: quiz.id,
-          // eslint-disable-next-line camelcase
           quiz_title: quiz.title,
           score: attempt.score,
         });
@@ -335,19 +339,27 @@ app.get("/quiz/:id", async (req, res) => {
 
   // Fetch the specific quiz from the database
   try {
-    const result = await db.query("SELECT * FROM Quizzes WHERE id = $1", [quiz_id]);
+    const result = await db.query("SELECT * FROM Quizzes WHERE id = $1", [
+      quiz_id,
+    ]);
 
     if (result.rows.length > 0) {
       let quiz = result.rows[0];
 
       // Fetch the questions for this quiz
-      const questionsResult = await db.query("SELECT * FROM Questions WHERE quiz_id = $1", [quiz_id]);
+      const questionsResult = await db.query(
+        "SELECT * FROM Questions WHERE quiz_id = $1",
+        [quiz_id]
+      );
 
       if (questionsResult.rows.length > 0) {
         quiz.questions = questionsResult.rows;
-        for(let i=0; i<quiz.questions.length; i++){
+        for (let i = 0; i < quiz.questions.length; i++) {
           // Fetch the choices for each question
-          const choicesResult = await db.query("SELECT * FROM Choices WHERE question_id = $1", [quiz.questions[i].id]);
+          const choicesResult = await db.query(
+            "SELECT * FROM Choices WHERE question_id = $1",
+            [quiz.questions[i].id]
+          );
           if (choicesResult.rows.length > 0) {
             quiz.questions[i].choices = choicesResult.rows;
           }
@@ -359,7 +371,7 @@ app.get("/quiz/:id", async (req, res) => {
       // If no quiz found, redirect back to quizzes page
       res.redirect("/quizzes");
     }
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
   }
