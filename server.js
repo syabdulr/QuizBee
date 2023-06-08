@@ -47,6 +47,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/quizzes", (req, res) => {
+  const user_id = req.session.user_id;
+  if (!user_id) {
+    return res.redirect("/register");
+  }
   res.render("quiz", { user_id: req.session.user_id });
 });
 
@@ -79,9 +83,15 @@ app.post("/register", async (req, res) => {
 app.get("/quizzes/new", (req, res) => {
   const user_id = req.session.user_id;
   if (!user_id) {
-    return res.redirect("/login");
+    return res.redirect("/register");
   }
   res.render("quiz-create");
+});
+app.get("/quizzes", (req, res) => {
+  const userId = req.session.user_id;
+  if (!userId) {
+    return res.redirect("/register");
+  }
 });
 
 app.post("/quizzes", async (req, res) => {
@@ -91,7 +101,6 @@ app.post("/quizzes", async (req, res) => {
       .status(401)
       .json({ message: "You need to be logged in to post a quiz." });
   }
-  console.log(req.body);
   const { title, description, question_text, questions } = req.body;
   try {
     // start a transaction
@@ -303,6 +312,7 @@ app.get("/submitQuizzes", async (req, res) => {
         const quiz = quizResult.rows[0];
         results.push({
           quiz_id: quiz.id,
+          // eslint-disable-next-line camelcase
           quiz_title: quiz.title,
           score: attempt.score,
         });
