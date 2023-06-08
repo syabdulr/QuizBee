@@ -85,53 +85,51 @@
       let questionIndex = 0;
 
       function addQuestion() {
-    const questionElement = $(`
-        <div>
-            <h2 class = "question-index"></h2>
+        const questionElement = $(`
+          <div>
+            <h2 class="question-index"></h2>
             <button onclick="quizbee.play()" type="button" class="removeQuestion">Remove Question 🚫</button>
             <button onclick="quizbee.play()" type="button" class="addChoice">Add Choice ➕</button>
             <h3>Question context:</h3>
-            <input type="text" id="question_text" name="question_text" required />
+            <input type="text" class="question-text" name="question_text" required />
             <div class="choices"></div>
-        </div>
-    `);
+          </div>
+        `);
 
-    $("#questions").append(questionElement);
+        $("#questions").append(questionElement);
 
-    let choiceIndex = 0;
+        let choiceIndex = 0;
 
         function addChoice() {
           const choicesElement = questionElement.find(".choices");
           choicesElement.append(`
-        <div>
-          <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${
+            <div>
+              <label for="questions[${questionIndex}].choices[${choiceIndex}].text">Choice ${
             choiceIndex + 1
           }:</label>
-          <input type="text" id="questions[${questionIndex}].choices[${choiceIndex}].text"
-            name="questions[${questionIndex}].choices[${choiceIndex}].text" required />
-          <input type="checkbox" id="questions[${questionIndex}].choices[${choiceIndex}].is_correct"
-            name="questions[${questionIndex}].choices[${choiceIndex}].is_correct" />
-          <label for="questions[${questionIndex}].choices[${choiceIndex}].is_correct" style="color: green;">Correct</label>
-        </div>
-      `);
+              <input type="text" id="questions[${questionIndex}].choices[${choiceIndex}].text"
+                name="questions[${questionIndex}].choices[${choiceIndex}].text" required />
+              <input type="checkbox" id="questions[${questionIndex}].choices[${choiceIndex}].is_correct"
+                name="questions[${questionIndex}].choices[${choiceIndex}].is_correct" />
+              <label for="questions[${questionIndex}].choices[${choiceIndex}].is_correct" style="color: green;">Correct</label>
+            </div>
+          `);
           choiceIndex++;
         }
 
         questionElement.find(".addChoice").click(addChoice);
         questionElement.find(".removeQuestion").click(function () {
-    questionElement.remove();
+          questionElement.remove();
 
-    // Renumber questions
-    renumberQuestions();
-});
-
+          // Renumber questions
+          renumberQuestions();
+        });
 
         // Add a default choice
         addChoice();
 
         questionIndex++;
         renumberQuestions();
-
       }
 
       $("#addQuestion").click(addQuestion);
@@ -147,17 +145,14 @@
         const quizData = {
           title: $("#title").val(),
           description: $("#description").val(),
-          question_text: $("#question_text").val(),
+          question_text: $(this).find(".question-text").val(),
           questions: [],
         };
-
         // Iterate over each question element and collect the data
         $("#questions > div").each(function () {
           const questionElement = $(this);
           const questionData = {
-            text: questionElement
-              .find('input[name^="questions[\\d].text"]')
-              .val(),
+            text: questionElement.find('.question-text').val(),
             choices: [],
           };
 
@@ -165,19 +160,17 @@
           questionElement.find(".choices > div").each(function () {
             const choiceElement = $(this);
             const choiceData = {
-              // input[name^="questions[\\d].choices[\\d].text"]
-
               text: choiceElement.find('input[type="text"]').val(),
-              is_correct: choiceElement
-                .find('input[type="checkbox"]')
-                .prop("checked"),
+              is_correct: choiceElement.find('input[type="checkbox"]').prop("checked"),
             };
             questionData.choices.push(choiceData);
           });
-
+          console.log("QUESTION DATA ------------------",questionData);
+          console.log("QUESTIONS ----------------------",questions);
           quizData.questions.push(questionData);
         });
 
+        console.log(quizData);
         // AJAX POST request code
         $.ajax({
           type: "POST",
@@ -197,11 +190,10 @@
       });
 
       function renumberQuestions() {
-    $("#questions > div").each(function (index) {
-        $(this).find(".question-index").text(`Question ${index + 1}`);
-    });
-}
-
+        $("#questions > div").each(function (index) {
+          $(this).find(".question-index").text(`Question ${index + 1}`);
+        });
+      }
 
       $("#createQuizButton").click(function () {
         $("#newQuizForm").fadeToggle(750);
@@ -261,24 +253,24 @@
       function loadQuiz(quiz) {
         console.log({ quiz });
         let quizHtml = `
-    <h1 class= "quiz-title">${quiz.title}</h1>
-    <p class= "quiz-description">${quiz.description}</p>
-    <form id="quizForm">
-  `;
+          <h1 class="quiz-title">${quiz.title}</h1>
+          <p class="quiz-description">${quiz.description}</p>
+          <form id="quizForm">
+        `;
 
         quiz.questions.forEach((question, questionIndex) => {
           let questionHtml = `
-      <div class="question">
-        <h2>Question ${questionIndex + 1}: ${question.question_text}</h2>
-    `;
+            <div class="question">
+              <h2>Question ${questionIndex + 1}: ${question.question_text}</h2>
+          `;
 
           question.choices.forEach((choice, choiceIndex) => {
             questionHtml += `
-        <div class="choice">
-          <input type="radio" id="q${questionIndex}c${choiceIndex}" name="q${questionIndex}" value="${choice.id}">
-          <label for="q${questionIndex}c${choiceIndex}">${choice.choice_text}</label>
-        </div>
-      `;
+              <div class="choice">
+                <input type="radio" id="q${questionIndex}c${choiceIndex}" name="q${questionIndex}" value="${choice.id}">
+                <label for="q${questionIndex}c${choiceIndex}">${choice.choice_text}</label>
+              </div>
+            `;
           });
 
           questionHtml += "</div>";
@@ -286,9 +278,9 @@
         });
 
         quizHtml += `
-    <button class="submit-button" type="submit">Submit Quiz</button>
-    </form>
-  `;
+          <button class="submit-button" type="submit">Submit Quiz</button>
+          </form>
+        `;
 
         $("body").html(quizHtml);
 
