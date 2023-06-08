@@ -30,11 +30,20 @@
 <body>
   <%- include('./_header.ejs') %>
   <main>
+
     <div class="container">
 
-      <h1 class="greeting"><div class="bee">🐝</div>Welcome To QuizBee!</h1>
+      <h1 class="greeting"><div class="bee" ><audio id="bee-sound" preload="auto"><source src="/media/bee-sound.mp3"></audio> 🐝</div>Welcome To QuizBee!</h1>
 
     </div>
+    <script>
+      $(document).ready(function() {
+        const beeSound = $("#bee-sound")[0];
+        $(".bee").mouseenter(function() {
+          beeSound.play();
+        });
+      });
+    </script>
   </main>
 </body>
 
