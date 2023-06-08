@@ -46,7 +46,6 @@ app.get("/", (req, res) => {
   res.render("index", { user_id }); // Pass user_id as a local variable to your EJS file
 });
 
-
 app.get("/quizzes", (req, res) => {
   res.render("quiz", { user_id: req.session.user_id });
 });
@@ -79,16 +78,18 @@ app.post("/register", async (req, res) => {
 
 app.get("/quizzes/new", (req, res) => {
   const user_id = req.session.user_id;
-  if(!user_id){
-    return res.redirect('/login');
+  if (!user_id) {
+    return res.redirect("/login");
   }
   res.render("quiz-create");
 });
 
 app.post("/quizzes", async (req, res) => {
   const user_id = req.session.user_id;
-  if(!user_id){
-    return res.status(401).json({ message: "You need to be logged in to post a quiz." });
+  if (!user_id) {
+    return res
+      .status(401)
+      .json({ message: "You need to be logged in to post a quiz." });
   }
   console.log(req.body);
   const { title, description, question_text, questions } = req.body;
@@ -144,10 +145,9 @@ app.post("/quizzes", async (req, res) => {
 });
 
 // Render login page
-app.get('/login', function(req, res) {
-  res.render('login', { user_id: req.session.user_id });
+app.get("/login", function (req, res) {
+  res.render("login", { user_id: req.session.user_id });
 });
-
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -185,11 +185,10 @@ app.post("/login", async (req, res) => {
     });
 });
 
-app.get('/logout', function(req, res){
+app.get("/logout", function (req, res) {
   req.session = null;
-  res.redirect('/');
+  res.redirect("/");
 });
-
 
 app.post("/displayQuizzes", (req, res) => {
   // Fetch quizzes from the database
@@ -224,8 +223,10 @@ app.post("/displayQuizzes", (req, res) => {
 
 app.post("/submitQuiz", async (req, res) => {
   const user_id = req.session.user_id;
-  if(!user_id){
-    return res.status(401).json({ message: "You need to be logged in to submit a quiz." });
+  if (!user_id) {
+    return res
+      .status(401)
+      .json({ message: "You need to be logged in to submit a quiz." });
   }
   const quizData = req.body;
   try {
@@ -284,9 +285,11 @@ app.get("/submitQuizzes", async (req, res) => {
     );
 
     if (quizAttemptsResult.rows.length === 0) {
-      return res
-        .status(200)
-        .render("submitQuizzes", { results: [], message: "No quiz attempts found for this user.", user_id });
+      return res.status(200).render("submitQuizzes", {
+        results: [],
+        message: "No quiz attempts found for this user.",
+        user_id,
+      });
     }
 
     const quizAttempts = quizAttemptsResult.rows;
@@ -312,4 +315,3 @@ app.get("/submitQuizzes", async (req, res) => {
     res.status(500).render("error", { message: "Server error" });
   }
 });
-
