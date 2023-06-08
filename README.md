@@ -46,6 +46,7 @@ The Quiz App is a web application that lets you create and share quizzes with yo
 - Users can attempt a quiz.
 - Users can see the results of their recent attempt.
 - Users can share a link to the result of their attempt.
+- Users can access pages dynamically with the power of Jquery and AJAX
 
 ## Tech Stack
 
