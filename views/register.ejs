@@ -25,7 +25,9 @@
   <script defer src="/scripts/app.js"></script>
 
   <script>
-    const quizbee = new Audio("/media/quizbee.mp3");
+    const blastSound = new Audio("/media/blastSound.mp3");
+    const removeQuestion = new Audio("/media/removeQuestion.mp3");
+    const addChoice = new Audio("/media/addChoice.mp3")
   </script>
 
 </head>
@@ -46,7 +48,7 @@
           <label for="password">Password:</label>
           <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button onclick="quizbee.play()" type="submit" class="btnPrimary">Register</button>
+        <button onclick="blastSound.play()" type="submit" class="btnPrimary">Register</button>
       </form>
     </div>
   </main>
