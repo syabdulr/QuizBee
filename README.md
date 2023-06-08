@@ -4,6 +4,16 @@
 
 The Quiz App is a web application that lets you create and share quizzes with your friends. The creator of the quiz can view and share all the results at the end of the quiz.
 
+## Final Product
+
+![Home Page](https://github.com/syabdulr/midterm/blob/master/public/media/BeeQuizz-Screenshots/bee-homepage.PNG?raw=true "Home Page")
+![Quiz Sample](https://github.com/syabdulr/midterm/blob/master/public/media/BeeQuizz-Screenshots/quiz-final.png?raw=true "Quiz Sample")
+![Results](https://github.com/syabdulr/midterm/blob/master/public/media/BeeQuizz-Screenshots/result-page.PNG?raw=true "Results")
+![Create Quiz](https://github.com/syabdulr/midterm/blob/master/public/media/BeeQuizz-Screenshots/create-quiz.PNG?raw=true "Create Quiz")
+![Display Quizzes](https://github.com/syabdulr/midterm/blob/master/public/media/BeeQuizz-Screenshots/Display-quizzes.PNG?raw=true "Display Quizzes")
+
+
+
 ## Creators
 
 [Abdul Syed](https://github.com/syabdulr)  
@@ -81,13 +91,3 @@ EJS
 
 - nodemon         2.0.22
 
-
-Here's our logo (hover to see the title text):
-
-Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
-
-Reference-style: 
-![alt text][logo]
-
-[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 2"
