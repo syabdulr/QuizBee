@@ -19,20 +19,6 @@ The Quiz App is a web application that lets you create and share quizzes with yo
 [Aryan Ahmadi](https://github.com/arianah75)  
 [Bea Mungcal ](https://github.com/segvndo)
 
-## Getting Started
-
-1. Create the `.env` by using `.env.example` as a reference: `cp .env.example .env`
-2. Update the .env file with your correct local information 
-  - username: `labber` 
-  - password: `labber` 
-  - database: `midterm`
-3. Install dependencies: `npm i`
-4. Fix to binaries for sass: `npm rebuild node-sass`
-5. Reset database: `npm run db:reset`
-  - Check the db folder to see what gets created and seeded in the SDB
-7. Run the server: `npm run local`
-  - Note: nodemon is used, so you should not have to restart your server
-8. Visit `http://localhost:8080/`
 
 ## Features
 
@@ -57,6 +43,21 @@ jQuery
 SASS
 EJS
 
+
+## Getting Started
+
+1. Create the `.env` by using `.env.example` as a reference: `cp .env.example .env`
+2. Update the .env file with your correct local information 
+  - username: `labber` 
+  - password: `labber` 
+  - database: `midterm`
+3. Install dependencies: `npm i`
+4. Fix to binaries for sass: `npm rebuild node-sass`
+5. Reset database: `npm run db:reset`
+  - Check the db folder to see what gets created and seeded in the SDB
+7. Run the server: `npm run local`
+  - Note: nodemon is used, so you should not have to restart your server
+8. Visit `http://localhost:8080/`
 
 ## Warnings & Tips
 
