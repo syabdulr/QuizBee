@@ -48,6 +48,11 @@ app.get("/", (req, res) => {
 
 
 app.get("/quizzes", (req, res) => {
+  const user_id = req.session.user_id;
+
+  if (!user_id) {
+    return res.redirect("/register");
+  }
   res.render("quiz", { user_id: req.session.user_id });
 });
 
