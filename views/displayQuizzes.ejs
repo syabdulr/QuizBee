@@ -38,6 +38,28 @@
         }
       });
     });
+
+    // const blastSound = new Audio("/media/blastSound.mp3");
+    // const quizListID = document.getElementById("quizList")
+    // quizListID.addEventListener("submit", function(event) {
+    //   event.preventDefault();
+    //   blastSound.play();
+    //   blastSound.onended = function() {
+    //     quizListId.submit();
+    //   }
+    // })
+
+    const blastSound = new Audio("/media/blastSound.mp3");
+    const quizListElement = document.getElementById("quizList");
+
+    // Add sound effect to the quizList element
+    quizListElement.addEventListener("submit", function(event) {
+      event.preventDefault();
+      blastSound.play();
+      blastSound.onended = function() {
+        quizListElement.submit();
+      }
+    });
   </script>
 </body>
 </html>
