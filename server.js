@@ -97,7 +97,7 @@ app.post("/register", async (req, res) => {
     hashedPassword,
   ])
     .then(() => {
-      res.redirect("/");
+      res.redirect("/login");
     })
     .catch((err) => {
       console.error(err);
